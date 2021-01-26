@@ -1,0 +1,29 @@
+server:
+  address: localhost
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3308/ta
+    username: the2792
+    password: canyou12
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # 애플리케이션이 실행될때마다 테이블을 드랍하고 다시 생성
+    properties:
+      hibernate:
+        # show_sql: true # 하이버네이트에서 실행되는 SQL문이 로그로 출력됨
+        format_sql: true # 하이버네이트에서 실행되는 SQL문이 System.out 으로 출력됨
+        dialect: org.hibernate.dialect.MySQL5Dialect
+
+logging.level:
+  org.hibernate.SQL: debug
