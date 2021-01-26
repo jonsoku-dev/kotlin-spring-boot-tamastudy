@@ -3,7 +3,7 @@ package com.tamastudy.tama.config.jwt
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.tamastudy.tama.config.auth.PrincipalDetails
-import com.tamastudy.tama.repository.user.UserRepository
+import com.tamastudy.tama.repository.UserRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken

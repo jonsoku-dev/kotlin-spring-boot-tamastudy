@@ -1,6 +1,5 @@
 package com.tamastudy.tama.entity
 
-import com.tamastudy.tama.dto.user.UserDto
 import javax.persistence.*
 
 @Entity
@@ -28,14 +27,5 @@ data class User(
             }
         }
         return list
-    }
-}
-
-fun User?.convertUser(userDto: UserDto): User {
-    return User().apply {
-        this.id = userDto.id
-        this.username = userDto.username
-        this.email = userDto.email
-        this.roles = userDto.roles
     }
 }

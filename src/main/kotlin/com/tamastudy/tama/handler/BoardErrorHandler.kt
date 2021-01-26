@@ -1,8 +1,8 @@
-package com.tamastudy.tama.handler.board
+package com.tamastudy.tama.handler
 
 import com.tamastudy.tama.controller.BoardApiController
-import com.tamastudy.tama.dto.error.Error
-import com.tamastudy.tama.dto.error.ErrorResponse
+import com.tamastudy.tama.dto.ErrorDto.Error
+import com.tamastudy.tama.dto.ErrorDto.ErrorResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice

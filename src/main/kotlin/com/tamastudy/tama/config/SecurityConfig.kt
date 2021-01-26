@@ -2,7 +2,7 @@ package com.tamastudy.tama.config
 
 import com.tamastudy.tama.config.jwt.JwtAuthenticationFilter
 import com.tamastudy.tama.config.jwt.JwtAuthorizationFilter
-import com.tamastudy.tama.repository.user.UserRepository
+import com.tamastudy.tama.repository.UserRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity

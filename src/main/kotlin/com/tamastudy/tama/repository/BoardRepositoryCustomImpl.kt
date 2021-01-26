@@ -1,10 +1,8 @@
-package com.tamastudy.tama.repository.board
+package com.tamastudy.tama.repository
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.tamastudy.tama.dto.board.BoardDto
-import com.tamastudy.tama.dto.board.BoardPagingCondition
-import com.tamastudy.tama.dto.board.BoardPagingDto
-import com.tamastudy.tama.dto.board.QBoardPagingDto
+import com.tamastudy.tama.dto.BoardDto
+import com.tamastudy.tama.dto.QBoardDto_BoardPaging
 import com.tamastudy.tama.entity.Board
 import com.tamastudy.tama.entity.QBoard.board
 import com.tamastudy.tama.entity.QBoardCategory.boardCategory
@@ -14,7 +12,6 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
-import java.util.*
 import javax.persistence.EntityManager
 
 @Repository
@@ -25,9 +22,9 @@ class BoardRepositoryCustomImpl(private val em: EntityManager) : BoardRepository
         queryFactory = JPAQueryFactory(em)
     }
 
-    override fun searchPageSimple(condition: BoardPagingCondition?, pageable: Pageable?): Page<BoardPagingDto> {
+    override fun searchPageSimple(condition: BoardDto.BoardPagingCondition?, pageable: Pageable?): Page<BoardDto.BoardPaging> {
         val result = queryFactory
-                ?.select(QBoardPagingDto(
+                ?.select(QBoardDto_BoardPaging(
                         board.id.`as`("boardId"),
                         board.title,
                         board.description,
@@ -47,12 +44,12 @@ class BoardRepositoryCustomImpl(private val em: EntityManager) : BoardRepository
         val content = result?.results!!
         val total = result.total
 
-        return PageImpl<BoardPagingDto>(content, pageable!!, total)
+        return PageImpl<BoardDto.BoardPaging>(content, pageable!!, total)
     }
 
-    override fun searchPageComplex(condition: BoardPagingCondition?, pageable: Pageable?): Page<BoardPagingDto> {
+    override fun searchPageComplex(condition: BoardDto.BoardPagingCondition?, pageable: Pageable?): Page<BoardDto.BoardPaging> {
         val content = queryFactory
-                ?.select(QBoardPagingDto(
+                ?.select(QBoardDto_BoardPaging(
                         board.id.`as`("boardId"),
                         board.title,
                         board.description,

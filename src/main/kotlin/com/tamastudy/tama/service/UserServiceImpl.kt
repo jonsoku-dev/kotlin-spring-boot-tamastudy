@@ -1,9 +1,9 @@
-package com.tamastudy.tama.service.user
+package com.tamastudy.tama.service
 
-import com.tamastudy.tama.dto.user.UserDto
-import com.tamastudy.tama.dto.user.convertUserDto
+import com.tamastudy.tama.dto.UserDto.UserInfo
 import com.tamastudy.tama.entity.User
-import com.tamastudy.tama.repository.user.UserRepository
+import com.tamastudy.tama.mapper.UserMapper
+import com.tamastudy.tama.repository.UserRepository
 import javassist.NotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserServiceImpl(
+        private val userMapper: UserMapper,
         private val userRepository: UserRepository,
         private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : UserService {
@@ -21,8 +22,6 @@ class UserServiceImpl(
             this.password = bCryptPasswordEncoder.encode(user.password)
             this.roles = "ROLE_USER"
         }.let {
-            println("HERE=======HERE=======HERE=======HERE=======HERE=======")
-            println(it)
             userRepository.save(it)
         }
     }
@@ -31,13 +30,13 @@ class UserServiceImpl(
         TODO("Not yet implemented")
     }
 
-    override fun findAll(): List<UserDto> {
+    override fun findAll(): List<UserInfo> {
         TODO("Not yet implemented")
     }
 
-    override fun findById(id: Long): UserDto {
+    override fun findById(id: Long): UserInfo {
         return userRepository.findByIdOrNull(id)?.let {
-            UserDto().convertUserDto(it)
+            userMapper.toDto(it)
         } ?: throw NotFoundException("$id 에 해당하는 유저가 존재하지 않습니다. ")
     }
 }

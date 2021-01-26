@@ -1,6 +1,5 @@
 package com.tamastudy.tama.entity
 
-import com.tamastudy.tama.dto.board.BoardDto
 import javax.persistence.*
 
 @Entity
@@ -19,13 +18,3 @@ data class Board(
         @JoinColumn(name = "category_id")
         var category: BoardCategory? = null
 )
-
-fun Board?.convertBoard(boardDto: BoardDto, category: BoardCategory, user: User): Board {
-    return Board().apply {
-        this.id = boardDto.id
-        this.title = boardDto.title
-        this.description = boardDto.description
-        this.category = category
-        this.user = user
-    }
-}

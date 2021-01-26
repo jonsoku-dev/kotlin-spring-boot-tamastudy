@@ -5,8 +5,7 @@ import com.tamastudy.tama.entity.BoardCategory
 import com.tamastudy.tama.entity.User
 import com.tamastudy.tama.mapper.BoardMapper
 import com.tamastudy.tama.mapper.BoardMapperImpl
-import com.tamastudy.tama.service.board.BoardService
-import com.tamastudy.tama.service.board.BoardServiceImpl
+import com.tamastudy.tama.service.BoardService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

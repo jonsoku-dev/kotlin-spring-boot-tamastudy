@@ -1,6 +1,6 @@
 package com.tamastudy.tama.config.auth
 
-import com.tamastudy.tama.repository.user.UserRepository
+import com.tamastudy.tama.repository.UserRepository
 import org.springframework.security.authentication.InternalAuthenticationServiceException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService

@@ -1,4 +1,4 @@
-package com.tamastudy.tama.repository.board
+package com.tamastudy.tama.repository
 
 import com.tamastudy.tama.entity.BoardCategory
 import org.springframework.data.jpa.repository.JpaRepository
