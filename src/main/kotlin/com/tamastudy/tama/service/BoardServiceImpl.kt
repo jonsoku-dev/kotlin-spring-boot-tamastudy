@@ -1,6 +1,8 @@
 package com.tamastudy.tama.service
 
 import com.tamastudy.tama.dto.BoardDto
+import com.tamastudy.tama.dto.BoardDto.BoardInfo
+import com.tamastudy.tama.dto.BoardDto.BoardPagingCondition
 import com.tamastudy.tama.entity.Board
 import com.tamastudy.tama.mapper.BoardMapper
 import com.tamastudy.tama.repository.BoardRepository
@@ -15,25 +17,21 @@ class BoardServiceImpl(
         private val boardMapper: BoardMapper,
         private val repository: BoardRepository
 ) : BoardService {
-    override fun findAllWithPage(condition: BoardDto.BoardPagingCondition?, pageable: Pageable?): Page<BoardDto.BoardPaging> {
-        return repository.searchPageSimple(condition, pageable)
-    }
-
-    override fun findAllWithComplexPage(condition: BoardDto.BoardPagingCondition?, pageable: Pageable?): Page<BoardDto.BoardPaging> {
+    override fun findAllWithComplexPage(condition: BoardPagingCondition, pageable: Pageable): Page<BoardDto.BoardPaging> {
         return repository.searchPageComplex(condition, pageable)
     }
 
-    override fun findById(id: Long): BoardDto.BoardInfo {
+    override fun findById(id: Long): BoardInfo {
         return findBoard(id).let {
             boardMapper.toDto(it)
         }
     }
 
-    override fun createBoard(board: Board): BoardDto.BoardInfo {
-        return boardMapper.toDto(board)
+    override fun createBoard(board: Board): BoardInfo {
+        return boardMapper.toDto(repository.save(board))
     }
 
-    override fun updateBoard(board: Board): BoardDto.BoardInfo {
+    override fun updateBoard(board: Board): BoardInfo {
         val newBoard = board.id?.let {
             findBoard(it).let {
                 repository.save(board)
