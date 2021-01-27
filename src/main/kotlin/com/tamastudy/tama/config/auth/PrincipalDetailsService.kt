@@ -13,10 +13,12 @@ class PrincipalDetailsService(
 ) : UserDetailsService {
     override fun loadUserByUsername(email: String): UserDetails {
         println("PrincipalDetailsService 의 loadUserByUsername()")
-        userRepository.findByEmail(email)?.let { userEntity ->
-            return PrincipalDetails(userEntity)
-        } ?: run {
-            throw InternalAuthenticationServiceException("email 로 유저를 찾을 수 없습니다.")
+        return userRepository.findByEmail(email).let { userEntity ->
+            if (userEntity.isPresent) {
+                PrincipalDetails(userEntity.get())
+            } else {
+                throw InternalAuthenticationServiceException("email 로 유저를 찾을 수 없습니다.")
+            }
         }
     }
 }

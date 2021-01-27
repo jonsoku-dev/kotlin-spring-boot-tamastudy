@@ -6,15 +6,11 @@ import javax.persistence.*
 data class User(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "user_id")
-        var id: Long? = 0,
+        var id: Long? = null,
         var username: String? = null,
         var email: String? = null,
         var password: String? = null,
         var roles: String? = null, // ROLE_USER, ROLE_MANAGER, ROLE_ADMIN
-
-//        @OneToMany(mappedBy = "user")
-//        var boards: List<Board>? = null
-
 ) {
     fun getRoleList(): MutableList<String> {
         val list = mutableListOf<String>()

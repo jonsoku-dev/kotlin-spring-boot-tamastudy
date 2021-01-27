@@ -29,7 +29,12 @@ class BoardAdapterImpl(
             this.title = boardUpdateRequest.title
             this.description = boardUpdateRequest.description
             this.category = category
+            // BoardMapper 에서 @Mapping 을 하지 않으려면 이걸 사용
+//            this.user = User().apply {
+//                this.id = boardInfo.userId
+//            }
         }
+        println(updateBoard)
         return boardService.updateBoard(updateBoard)
     }
 

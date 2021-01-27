@@ -17,7 +17,7 @@ import org.springframework.web.filter.CorsFilter
 class SecurityConfig(
         private val corsFilter: CorsFilter,
         private val userRepository: UserRepository
-): WebSecurityConfigurerAdapter() {
+) : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun passwordEncoder(): BCryptPasswordEncoder {
@@ -37,7 +37,7 @@ class SecurityConfig(
                 .authorizeRequests()
                 .antMatchers("/api/v1/hello").permitAll()
                 .antMatchers("/api/v1/authenticate").permitAll()
-                .antMatchers("/api/v1/join").permitAll()
+                .antMatchers("/api/v1/user/join").permitAll()
                 .anyRequest().authenticated()
 //                .authorizeRequests()
 //                .antMatchers("/api/v1/user/**")

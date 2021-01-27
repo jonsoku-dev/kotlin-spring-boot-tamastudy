@@ -11,6 +11,7 @@ class BoardDto {
             var userId: Long? = null,
             var username: String? = null,
             var email: String? = null,
+            var createdDate: String? = null
     )
 
     data class BoardCreateRequest(
