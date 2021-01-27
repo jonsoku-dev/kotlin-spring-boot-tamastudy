@@ -4,12 +4,24 @@ import com.tamastudy.tama.dto.UserDto.CreateUserRequest
 import com.tamastudy.tama.dto.UserDto.UserInfo
 import com.tamastudy.tama.entity.User
 import org.mapstruct.Mapper
+import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
+import org.mapstruct.factory.Mappers
 
-@Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE)
-interface UserMapper : EntityMapper<UserInfo, User> {
-    // request 객체에 존재하지만 password 는 null 값이 된다.
-//    @Mapping(target = "password", ignore = true)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+interface UserMapper {
+
+    companion object {
+        val MAPPER: UserMapper = Mappers.getMapper(UserMapper::class.java)
+    }
+
+    fun toEntity(dto: UserInfo): User
+
+    fun toEntities(dtos: List<UserInfo>): List<User>
+
+    fun toDto(entity: User): UserInfo
+
+    fun toDtos(entities: List<User>): List<UserInfo>
+
     fun CreateUserRequestToEntity(createUserRequest: CreateUserRequest): User
 }

@@ -66,10 +66,10 @@ dependencies {
     implementation("com.auth0:java-jwt:3.12.0")
     implementation("com.google.code.gson:gson:2.8.6")
     // map-struct
-    implementation("org.mapstruct:mapstruct:1.3.0.Final")
+    implementation("org.mapstruct:mapstruct:1.4.1.Final")
     // map-struct Annotation Processor
-    kapt("org.mapstruct:mapstruct-processor:1.3.0.Final")
-    kaptTest("org.mapstruct:mapstruct-processor:1.3.0.Final")
+    kapt("org.mapstruct:mapstruct-processor:1.4.1.Final")
+    kaptTest("org.mapstruct:mapstruct-processor:1.4.1.Final")
     // end of map-struct
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")

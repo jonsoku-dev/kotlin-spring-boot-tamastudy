@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserServiceImpl(
-        private val mapper: UserMapper,
         private val repository: UserRepository,
         private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : UserService {
@@ -41,11 +40,11 @@ class UserServiceImpl(
     }
 
     override fun findAll(): List<UserInfo> {
-        return mapper.toDtos(repository.findAll())
+        return UserMapper.MAPPER.toDtos(repository.findAll())
     }
 
     override fun findById(id: Long): UserInfo {
-        return mapper.toDto(findUserEntityById(id))
+        return UserMapper.MAPPER.toDto(findUserEntityById(id))
     }
 
     private fun findUserEntityById(id: Long): User {

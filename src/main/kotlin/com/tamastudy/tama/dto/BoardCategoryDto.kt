@@ -9,4 +9,8 @@ class BoardCategoryDto {
     data class BoardCategoryCreateRequest(
             var name: String? = null
     )
+
+    data class BoardCategoryUpdateRequest(
+            var name: String? = null
+    )
 }

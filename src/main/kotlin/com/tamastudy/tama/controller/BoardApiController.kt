@@ -23,16 +23,35 @@ class BoardApiController(
         return boardService.findAllWithComplexPage(boardPagingCondition, pageable)
     }
 
-    @GetMapping("/{boardId}")
-    fun getBoard(@PathVariable boardId: Long): BoardInfo {
-        return boardService.findById(boardId)
-    }
-
     @PostMapping
     fun createBoard(
             @Valid @RequestBody request: BoardCreateRequest
     ): ResponseEntity<BoardInfo> {
         val user = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserEntity()
         return ResponseEntity(boardAdapter.createBoard(user, request), HttpStatus.CREATED)
+    }
+
+    @GetMapping("/{boardId}")
+    fun getBoard(@PathVariable boardId: Long): ResponseEntity<BoardInfo> {
+        return ResponseEntity(boardService.findById(boardId), HttpStatus.OK)
+    }
+
+    @PatchMapping("/{boardId}")
+    fun updateBoard(
+            @PathVariable boardId: Long,
+            @Valid @RequestBody request: BoardUpdateRequest
+    ): ResponseEntity<BoardInfo> {
+        val user = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserEntity()
+        val updatedBoard = boardAdapter.updateBoard(boardId, user, request)
+        return ResponseEntity(updatedBoard, HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{boardId}")
+    fun deleteBoard(
+            @PathVariable boardId: Long
+    ): ResponseEntity<Unit> {
+        val user = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserEntity()
+        boardAdapter.deleteBoard(boardId, user)
+        return ResponseEntity.noContent().build()
     }
 }

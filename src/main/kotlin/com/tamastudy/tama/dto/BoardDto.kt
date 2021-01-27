@@ -7,7 +7,10 @@ class BoardDto {
             var id: Long? = null,
             var title: String? = null,
             var description: String? = null,
-            var categoryId: Long? = null
+            var categoryId: Long? = null,
+            var userId: Long? = null,
+            var username: String? = null,
+            var email: String? = null,
     )
 
     data class BoardCreateRequest(
@@ -17,9 +20,9 @@ class BoardDto {
     )
 
     data class BoardUpdateRequest(
-            var title: String? = null,
-            var description: String? = null,
-            var categoryId: Long? = null
+            var title: String,
+            var description: String,
+            var categoryId: Long
     )
 
     data class BoardPagingCondition(
