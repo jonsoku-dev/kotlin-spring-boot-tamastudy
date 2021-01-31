@@ -32,8 +32,12 @@ class BoardApiController(
     fun createBoard(
             @Valid @RequestBody request: BoardCreateRequest
     ): ResponseEntity<BoardDto> {
-        val user = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserEntity()
-        return ResponseEntity(boardAdapter.createBoard(user, request), HttpStatus.CREATED)
+        return ResponseEntity(
+                boardAdapter.createBoard(
+                        (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto(),
+                        request
+                ), HttpStatus.CREATED
+        )
     }
 
     @GetMapping("/{boardId}")
@@ -46,16 +50,25 @@ class BoardApiController(
             @PathVariable boardId: Long,
             @Valid @RequestBody request: BoardUpdateRequest
     ): ResponseEntity<BoardDto> {
-        val user = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserEntity()
-        return ResponseEntity(boardAdapter.updateBoard(boardId, user, request), HttpStatus.CREATED)
+        return ResponseEntity(
+                boardAdapter.updateBoard(
+                        boardId,
+                        (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto(),
+                        request
+                ),
+                HttpStatus.CREATED
+        )
     }
 
     @DeleteMapping("/{boardId}")
     fun deleteBoard(
             @PathVariable boardId: Long
     ): ResponseEntity<Unit> {
-        val user = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserEntity()
-        boardService.deleteById(user, boardId)
-        return ResponseEntity.noContent().build()
+        return boardService.deleteById(
+                boardId,
+                (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
+        ).let {
+            ResponseEntity.noContent().build()
+        }
     }
 }

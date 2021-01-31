@@ -19,17 +19,6 @@ class Board {
             var updatedAt: LocalDateTime? = null,
     )
 
-    data class BoardInfo(
-            var boardId: Long? = null,
-            var title: String? = null,
-            var description: String? = null,
-            var categoryId: Long? = null,
-            var categoryName: String? = null,
-            var userId: Long? = null,
-            var username: String? = null,
-            var email: String? = null,
-    )
-
     data class BoardCreateRequest(
             @field:NotBlank
             @field:Length(max = 200)

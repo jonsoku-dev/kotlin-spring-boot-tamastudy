@@ -20,7 +20,7 @@ class UserServiceImpl(
             this.username = createUserRequest.username
             this.email = createUserRequest.email
             this.password = bCryptPasswordEncoder.encode(createUserRequest.password)
-            this.roles = ROLES.ROLE_USER
+            this.roles = "ROLE_USER"
         }.also {
             println("createUser: $it")
         }.let { user ->

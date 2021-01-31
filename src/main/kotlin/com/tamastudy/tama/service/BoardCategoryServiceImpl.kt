@@ -1,7 +1,6 @@
 package com.tamastudy.tama.service
 
-import com.tamastudy.tama.dto.BoardCategory.BoardCategoryDto
-import com.tamastudy.tama.dto.BoardCategory.BoardCategoryUpdateRequest
+import com.tamastudy.tama.dto.BoardCategory.*
 import com.tamastudy.tama.entity.BoardCategory
 import com.tamastudy.tama.mapper.BoardCategoryMapper
 import com.tamastudy.tama.repository.BoardCategoryRepository
@@ -13,16 +12,18 @@ import org.springframework.stereotype.Service
 class BoardCategoryServiceImpl(
         private val repository: BoardCategoryRepository
 ) : BoardCategoryService {
-    override fun createCategory(category: BoardCategory): BoardCategoryDto {
-        return BoardCategoryMapper.MAPPER.toDto(repository.save(category))
+    override fun createCategory(boardCategoryCreateRequest: BoardCategoryCreateRequest): BoardCategoryDto {
+        val newBoardCategory = BoardCategory().apply {
+            this.name = boardCategoryCreateRequest.name
+        }
+        return BoardCategoryMapper.MAPPER.toDto(repository.save(newBoardCategory))
     }
 
-    override fun updateCategory(id: Long, request: BoardCategoryUpdateRequest): BoardCategoryDto {
-        val newCategory = findCategory(id).apply {
-            this.name = request.name
+    override fun updateCategory(id: Long, boardCategoryUpdateRequest: BoardCategoryUpdateRequest): BoardCategoryDto {
+        val updatedCategory = findCategory(id).apply {
+            this.name = boardCategoryUpdateRequest.name
         }
-
-        return BoardCategoryMapper.MAPPER.toDto(repository.save(newCategory))
+        return BoardCategoryMapper.MAPPER.toDto(repository.save(updatedCategory))
     }
 
     override fun findById(id: Long): BoardCategoryDto {
@@ -34,8 +35,7 @@ class BoardCategoryServiceImpl(
     }
 
     override fun deleteById(id: Long) {
-        val category = findCategory(id)
-        return repository.delete(category)
+        return repository.delete(findCategory(id))
     }
 
     private fun findCategory(id: Long): BoardCategory {

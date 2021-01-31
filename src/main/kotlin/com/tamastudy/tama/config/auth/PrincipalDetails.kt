@@ -1,6 +1,7 @@
 package com.tamastudy.tama.config.auth
 
 import com.tamastudy.tama.entity.User
+import com.tamastudy.tama.mapper.UserMapper
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
@@ -17,6 +18,8 @@ class PrincipalDetails(
     }
 
     fun getUserEntity() = user
+
+    fun getUserDto() = UserMapper.MAPPER.toDto(user)
 
     fun getId() = user.id
 

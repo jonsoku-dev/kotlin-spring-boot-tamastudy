@@ -22,12 +22,9 @@ class BoardCategoryApiController(
 
     @PostMapping
     fun createCategory(
-            @Valid @RequestBody request: BoardCategoryCreateRequest
+            @Valid @RequestBody boardCategoryCreateRequest: BoardCategoryCreateRequest
     ): ResponseEntity<BoardCategoryDto> {
-        val category = BoardCategory().apply {
-            this.name = request.name
-        }
-        return ResponseEntity(boardCategoryService.createCategory(category), HttpStatus.CREATED)
+        return ResponseEntity(boardCategoryService.createCategory(boardCategoryCreateRequest), HttpStatus.CREATED)
     }
 
     @PatchMapping("/{categoryId}")

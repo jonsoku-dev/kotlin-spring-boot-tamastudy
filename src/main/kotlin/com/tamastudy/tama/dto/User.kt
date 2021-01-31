@@ -22,27 +22,22 @@ class User {
             var updatedAt: LocalDateTime? = null,
     )
 
-    data class UserInfo(
-            var id: Long? = null,
-            var username: String? = null,
-            var email: String? = null,
-            var roles: String? = null// ROLE_USER, ROLE_MANAGER, ROLE_ADMIN
-    )
-
     data class CreateUserRequest(
-            @field:Length(min = 2, max = 10)
+            @field:NotBlank
+            @field:Length(max = 10)
             var username: String,
             @field:NotBlank
             @field:Email
             var email: String,
-            @field:Length(min = 4, max = 20)
+            @field:NotBlank
+            @field:Length(max = 20)
             var password: String
     )
 
     data class UpdateUserRequest(
-            @field:Length(min = 2, max = 10)
+            @field:Length(max = 10)
             var username: String,
-            @field:Length(min = 4, max = 20)
+            @field:Length(max = 20)
             var password: String
     )
 }

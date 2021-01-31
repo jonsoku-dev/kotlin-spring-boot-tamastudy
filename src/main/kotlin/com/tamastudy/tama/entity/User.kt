@@ -17,7 +17,7 @@ data class User(
         var username: String? = null,
         var email: String? = null,
         var password: String? = null,
-        var roles: ROLES? = null, // ROLE_USER, ROLE_MANAGER, ROLE_ADMIN
+        var roles: String? = null, // ROLE_USER, ROLE_MANAGER, ROLE_ADMIN
         @Column(updatable = false)
         var createdAt: LocalDateTime? = LocalDateTime.now(),
         var updatedAt: LocalDateTime? = LocalDateTime.now()

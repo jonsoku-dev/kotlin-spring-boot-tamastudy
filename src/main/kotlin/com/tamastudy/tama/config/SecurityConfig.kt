@@ -5,6 +5,7 @@ import com.tamastudy.tama.config.jwt.JwtAuthorizationFilter
 import com.tamastudy.tama.repository.UserRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -35,17 +36,21 @@ class SecurityConfig(
                 .addFilter(JwtAuthenticationFilter(authenticationManager()))
                 .addFilter(JwtAuthorizationFilter(authenticationManager(), userRepository))
                 .authorizeRequests()
-                .antMatchers("/api/v1/hello").permitAll()
-                .antMatchers("/api/v1/authenticate").permitAll()
-                .antMatchers("/api/v1/user/join").permitAll()
-                .anyRequest().authenticated()
-//                .authorizeRequests()
-//                .antMatchers("/api/v1/user/**")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers("/api/v1/manager/**")
-//                .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers("/api/v1/admin/**")
-//                .access("hasRole('ROLE_ADMIN')")
-//                .anyRequest().permitAll()
+                // User
+                .antMatchers("/api/v1/user/join", "/api/v1/user/authenticated").permitAll()
+                .antMatchers("/api/v1/user/**").authenticated()
+                // Board Category
+                .antMatchers(HttpMethod.GET, "/api/v1/category/**").permitAll()
+                .antMatchers("/api/v1/category/**").authenticated()
+                // Board
+                .antMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
+                .antMatchers("/api/v1/board/**").authenticated()
+                // Etc...
+                .anyRequest().permitAll()
     }
 }
+
+/*
+ * 권한주는법
+ * .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+ */

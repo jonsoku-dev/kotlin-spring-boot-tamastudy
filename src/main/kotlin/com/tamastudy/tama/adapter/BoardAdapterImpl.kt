@@ -1,6 +1,7 @@
 package com.tamastudy.tama.adapter
 
 import com.tamastudy.tama.dto.Board.*
+import com.tamastudy.tama.dto.User.UserDto
 import com.tamastudy.tama.entity.Board
 import com.tamastudy.tama.entity.User
 import com.tamastudy.tama.mapper.BoardCategoryMapper
@@ -14,21 +15,17 @@ class BoardAdapterImpl(
         private val boardCategoryService: BoardCategoryService,
         private val boardService: BoardService,
 ) : BoardAdapter {
-    override fun createBoard(user: User, boardCreateRequest: BoardCreateRequest): BoardDto {
-        val foundCategory = BoardCategoryMapper.MAPPER.toEntity(boardCategoryService.findById(boardCreateRequest.categoryId))
-
-        val newBoard = Board().apply {
-            this.title = boardCreateRequest.title
-            this.description = boardCreateRequest.description
-            this.category = foundCategory
-            this.user = user
-        }
-
-        return boardService.createBoard(newBoard)
+    override fun createBoard(userDto: UserDto, boardCreateRequest: BoardCreateRequest): BoardDto {
+        val categoryDto = boardCategoryService.findById(boardCreateRequest.categoryId)
+        return boardService.createBoard(userDto, categoryDto, boardCreateRequest)
     }
 
-    override fun updateBoard(boardId: Long, user: User, boardUpdateRequest: BoardUpdateRequest): BoardDto {
-        val foundCategory = BoardCategoryMapper.MAPPER.toEntity(boardCategoryService.findById(boardUpdateRequest.categoryId))
-        return boardService.updateBoard(boardId, user, foundCategory, boardUpdateRequest)
+    override fun updateBoard(boardId: Long, userDto: UserDto, boardUpdateRequest: BoardUpdateRequest): BoardDto {
+        return boardService.updateBoard(
+                boardId,
+                userDto,
+                boardCategoryService.findById(boardUpdateRequest.categoryId),
+                boardUpdateRequest
+        )
     }
 }

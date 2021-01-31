@@ -1,7 +1,8 @@
 package com.tamastudy.tama.dto
 
-import java.time.Instant
+import org.hibernate.validator.constraints.Length
 import java.time.LocalDateTime
+import javax.validation.constraints.NotBlank
 
 class BoardCategory {
     data class BoardCategoryDto(
@@ -11,16 +12,14 @@ class BoardCategory {
             var updatedAt: LocalDateTime? = null,
     )
 
-    data class BoardCategoryInfo(
-            var id: Long? = null,
-            var name: String? = null,
-    )
-
     data class BoardCategoryCreateRequest(
+            @field:NotBlank
+            @field:Length(max = 10)
             var name: String? = null
     )
 
     data class BoardCategoryUpdateRequest(
+            @field:Length(max = 10)
             var name: String? = null
     )
 }
