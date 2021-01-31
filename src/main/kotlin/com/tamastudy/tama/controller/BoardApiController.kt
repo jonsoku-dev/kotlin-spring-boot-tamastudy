@@ -30,45 +30,35 @@ class BoardApiController(
 
     @PostMapping
     fun createBoard(
-            @Valid @RequestBody request: BoardCreateRequest
+            @Valid @RequestBody boardCreateRequest: BoardCreateRequest
     ): ResponseEntity<BoardDto> {
-        return ResponseEntity(
-                boardAdapter.createBoard(
-                        (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto(),
-                        request
-                ), HttpStatus.CREATED
-        )
+        val userDto = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
+        val boardDto = boardAdapter.createBoard(userDto, boardCreateRequest)
+        return ResponseEntity.status(HttpStatus.CREATED).body(boardDto)
     }
 
     @GetMapping("/{boardId}")
     fun getBoard(@PathVariable boardId: Long): ResponseEntity<BoardDto> {
-        return ResponseEntity(boardService.findById(boardId), HttpStatus.OK)
+        val boardDto = boardService.findById(boardId)
+        return ResponseEntity.status(HttpStatus.OK).body(boardDto)
     }
 
     @PatchMapping("/{boardId}")
     fun updateBoard(
             @PathVariable boardId: Long,
-            @Valid @RequestBody request: BoardUpdateRequest
+            @Valid @RequestBody boardUpdateRequest: BoardUpdateRequest
     ): ResponseEntity<BoardDto> {
-        return ResponseEntity(
-                boardAdapter.updateBoard(
-                        boardId,
-                        (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto(),
-                        request
-                ),
-                HttpStatus.CREATED
-        )
+        val userDto = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
+        val boardDto = boardAdapter.updateBoard(boardId, userDto, boardUpdateRequest)
+        return ResponseEntity.status(HttpStatus.OK).body(boardDto)
     }
 
     @DeleteMapping("/{boardId}")
     fun deleteBoard(
             @PathVariable boardId: Long
     ): ResponseEntity<Unit> {
-        return boardService.deleteById(
-                boardId,
-                (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
-        ).let {
-            ResponseEntity.noContent().build()
-        }
+        val userDto = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
+        boardService.deleteById(boardId, userDto)
+        return ResponseEntity.noContent().build()
     }
 }

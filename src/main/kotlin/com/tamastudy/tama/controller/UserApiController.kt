@@ -23,19 +23,21 @@ class UserApiController(
 
     @GetMapping("/authenticate")
     fun authenticate(): ResponseEntity<UserDto> {
-        val id = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getId()!!
+        val userDto = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userService.findById(id))
+                .body(userDto)
     }
 
     @GetMapping("/")
     fun getUsers(): ResponseEntity<List<UserDto>> {
-        return ResponseEntity.ok().body(userService.findAll())
+        val userDtos = userService.findAll()
+        return ResponseEntity.status(HttpStatus.OK).body(userDtos)
     }
 
     @GetMapping("/{userId}")
     fun getUser(@PathVariable userId: Long): ResponseEntity<UserDto> {
-        return ResponseEntity.ok().body(userService.findById(userId))
+        val userDto = userService.findById(userId)
+        return ResponseEntity.status(HttpStatus.OK).body(userDto)
     }
 }
