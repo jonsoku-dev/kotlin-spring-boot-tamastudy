@@ -1,5 +1,6 @@
 package com.tamastudy.tama.entity
 
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -16,5 +17,9 @@ data class Board(
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "category_id")
-        var category: BoardCategory? = null
+        var category: BoardCategory? = null,
+
+        @Column(updatable = false)
+        var createdAt: LocalDateTime? = LocalDateTime.now(),
+        var updatedAt: LocalDateTime? = LocalDateTime.now()
 )

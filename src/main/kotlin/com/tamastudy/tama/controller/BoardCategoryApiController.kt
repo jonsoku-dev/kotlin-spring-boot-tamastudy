@@ -1,6 +1,7 @@
 package com.tamastudy.tama.controller
 
-import com.tamastudy.tama.dto.BoardCategoryDto.*
+import com.tamastudy.tama.dto.BoardCategory.*
+import com.tamastudy.tama.entity.Board
 import com.tamastudy.tama.entity.BoardCategory
 import com.tamastudy.tama.mapper.BoardCategoryMapper
 import com.tamastudy.tama.service.BoardCategoryService
@@ -15,14 +16,14 @@ class BoardCategoryApiController(
         private val boardCategoryService: BoardCategoryService
 ) {
     @GetMapping
-    fun getCategories(): ResponseEntity<List<BoardCategoryInfo>> {
+    fun getCategories(): ResponseEntity<List<BoardCategoryDto>> {
         return ResponseEntity(boardCategoryService.findAll(), HttpStatus.OK)
     }
 
     @PostMapping
     fun createCategory(
             @Valid @RequestBody request: BoardCategoryCreateRequest
-    ): ResponseEntity<BoardCategoryInfo> {
+    ): ResponseEntity<BoardCategoryDto> {
         val category = BoardCategory().apply {
             this.name = request.name
         }
@@ -33,15 +34,14 @@ class BoardCategoryApiController(
     fun updateCategory(
             @PathVariable categoryId: Long,
             @Valid @RequestBody request: BoardCategoryUpdateRequest
-    ): ResponseEntity<BoardCategoryInfo> {
-        val board = BoardCategoryMapper.MAPPER.updateRequestToEntity(request)
-        return ResponseEntity(boardCategoryService.updateCategory(categoryId, board), HttpStatus.OK)
+    ): ResponseEntity<BoardCategoryDto> {
+        return ResponseEntity(boardCategoryService.updateCategory(categoryId, request), HttpStatus.OK)
     }
 
     @GetMapping("/{categoryId}")
     fun getCategory(
             @PathVariable categoryId: Long
-    ): ResponseEntity<BoardCategoryInfo> {
+    ): ResponseEntity<BoardCategoryDto> {
         return ResponseEntity(boardCategoryService.findById(categoryId), HttpStatus.OK)
     }
 

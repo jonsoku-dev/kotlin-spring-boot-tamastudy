@@ -1,11 +1,11 @@
 package com.tamastudy.tama.service
 
-import com.tamastudy.tama.dto.UserDto.UserInfo
+import com.tamastudy.tama.dto.User.*
 import com.tamastudy.tama.entity.User
 
 interface UserService {
-    fun createUser(user: User): UserInfo
-    fun updateUser(id: Long, user: User)
-    fun findAll(): List<UserInfo>
-    fun findById(id: Long): UserInfo
+    fun createUser(createUserRequest: CreateUserRequest): UserDto
+    fun updateUser(id: Long, updateUserRequest: UpdateUserRequest): UserDto
+    fun findAll(): List<UserDto>
+    fun findById(id: Long): UserDto
 }

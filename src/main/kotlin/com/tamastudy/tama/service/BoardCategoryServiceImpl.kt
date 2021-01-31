@@ -1,6 +1,7 @@
 package com.tamastudy.tama.service
 
-import com.tamastudy.tama.dto.BoardCategoryDto.BoardCategoryInfo
+import com.tamastudy.tama.dto.BoardCategory.BoardCategoryDto
+import com.tamastudy.tama.dto.BoardCategory.BoardCategoryUpdateRequest
 import com.tamastudy.tama.entity.BoardCategory
 import com.tamastudy.tama.mapper.BoardCategoryMapper
 import com.tamastudy.tama.repository.BoardCategoryRepository
@@ -12,24 +13,23 @@ import org.springframework.stereotype.Service
 class BoardCategoryServiceImpl(
         private val repository: BoardCategoryRepository
 ) : BoardCategoryService {
-    override fun createCategory(category: BoardCategory): BoardCategoryInfo {
+    override fun createCategory(category: BoardCategory): BoardCategoryDto {
         return BoardCategoryMapper.MAPPER.toDto(repository.save(category))
     }
 
-    override fun updateCategory(id: Long, category: BoardCategory): BoardCategoryInfo {
-        val newCategory = findCategory(id).let {
-            it.name = category.name
-            repository.save(it)
+    override fun updateCategory(id: Long, request: BoardCategoryUpdateRequest): BoardCategoryDto {
+        val newCategory = findCategory(id).apply {
+            this.name = request.name
         }
 
-        return BoardCategoryMapper.MAPPER.toDto(newCategory)
+        return BoardCategoryMapper.MAPPER.toDto(repository.save(newCategory))
     }
 
-    override fun findById(id: Long): BoardCategoryInfo {
+    override fun findById(id: Long): BoardCategoryDto {
         return BoardCategoryMapper.MAPPER.toDto(findCategory(id))
     }
 
-    override fun findAll(): List<BoardCategoryInfo> {
+    override fun findAll(): List<BoardCategoryDto> {
         return BoardCategoryMapper.MAPPER.toDtos(repository.findAll())
     }
 

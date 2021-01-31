@@ -1,7 +1,7 @@
 package com.tamastudy.tama.controller
 
-import com.tamastudy.tama.dto.UserDto.CreateUserRequest
-import com.tamastudy.tama.dto.UserDto.UserInfo
+import com.tamastudy.tama.dto.User.CreateUserRequest
+import com.tamastudy.tama.dto.User.UserDto
 import com.tamastudy.tama.mapper.UserMapper
 import com.tamastudy.tama.service.UserService
 import org.springframework.http.ResponseEntity
@@ -15,19 +15,17 @@ class UserApiController(
 ) {
     @PostMapping("/join")
     fun join(@Valid @RequestBody createUserRequest: CreateUserRequest): ResponseEntity<Unit> {
-        UserMapper.MAPPER.CreateUserRequestToEntity(createUserRequest).also {
-            userService.createUser(it)
-        }
+        userService.createUser(createUserRequest)
         return ResponseEntity.noContent().build()
     }
 
     @GetMapping
-    fun getUsers(): ResponseEntity<List<UserInfo>> {
+    fun getUsers(): ResponseEntity<List<UserDto>> {
         return ResponseEntity.ok().body(userService.findAll())
     }
 
     @GetMapping("/{userId}")
-    fun getUser(@PathVariable userId: Long): ResponseEntity<UserInfo> {
+    fun getUser(@PathVariable userId: Long): ResponseEntity<UserDto> {
         return ResponseEntity.ok().body(userService.findById(userId))
     }
 }

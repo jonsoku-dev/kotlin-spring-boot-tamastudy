@@ -2,7 +2,7 @@ package com.tamastudy.tama.controller
 
 import com.tamastudy.tama.adapter.BoardAdapter
 import com.tamastudy.tama.config.auth.PrincipalDetails
-import com.tamastudy.tama.dto.BoardDto.*
+import com.tamastudy.tama.dto.Board.*
 import com.tamastudy.tama.service.BoardService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -23,16 +23,21 @@ class BoardApiController(
         return boardService.findAllWithComplexPage(boardPagingCondition, pageable)
     }
 
+    @GetMapping("/v2")
+    fun getBoardsV2(boardPagingCondition: BoardPagingCondition, pageable: Pageable): Page<BoardDto> {
+        return boardService.findDtosWithComplexPage(boardPagingCondition, pageable)
+    }
+
     @PostMapping
     fun createBoard(
             @Valid @RequestBody request: BoardCreateRequest
-    ): ResponseEntity<BoardInfo> {
+    ): ResponseEntity<BoardDto> {
         val user = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserEntity()
         return ResponseEntity(boardAdapter.createBoard(user, request), HttpStatus.CREATED)
     }
 
     @GetMapping("/{boardId}")
-    fun getBoard(@PathVariable boardId: Long): ResponseEntity<BoardInfo> {
+    fun getBoard(@PathVariable boardId: Long): ResponseEntity<BoardDto> {
         return ResponseEntity(boardService.findById(boardId), HttpStatus.OK)
     }
 
@@ -40,10 +45,9 @@ class BoardApiController(
     fun updateBoard(
             @PathVariable boardId: Long,
             @Valid @RequestBody request: BoardUpdateRequest
-    ): ResponseEntity<BoardInfo> {
+    ): ResponseEntity<BoardDto> {
         val user = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserEntity()
-        val updatedBoard = boardAdapter.updateBoard(boardId, user, request)
-        return ResponseEntity(updatedBoard, HttpStatus.OK)
+        return ResponseEntity(boardAdapter.updateBoard(boardId, user, request), HttpStatus.CREATED)
     }
 
     @DeleteMapping("/{boardId}")
@@ -51,7 +55,7 @@ class BoardApiController(
             @PathVariable boardId: Long
     ): ResponseEntity<Unit> {
         val user = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserEntity()
-        boardAdapter.deleteBoard(boardId, user)
+        boardService.deleteById(user, boardId)
         return ResponseEntity.noContent().build()
     }
 }

@@ -26,7 +26,6 @@ class JpaContext(
     fun establishRelation(@MappingTarget board: Board) {
         println("establishRelation : $board")
         val found = boardRepository.findOneWithUserById(board.id!!)
-        println(found)
         board.user = found?.user
     }
 }
