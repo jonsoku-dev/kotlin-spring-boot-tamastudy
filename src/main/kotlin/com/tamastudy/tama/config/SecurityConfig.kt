@@ -1,7 +1,7 @@
 package com.tamastudy.tama.config
 
-import com.tamastudy.tama.config.jwt.JwtAuthenticationFilter
-import com.tamastudy.tama.config.jwt.JwtAuthorizationFilter
+import com.tamastudy.tama.security.jwt.JwtSecurityConfig
+import com.tamastudy.tama.security.jwt.TokenProvider
 import com.tamastudy.tama.repository.UserRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -11,12 +11,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.web.filter.CorsFilter
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-        private val corsFilter: CorsFilter,
+        private val tokenProvider: TokenProvider,
+//        private val corsFilter: CorsFilter,
         private val userRepository: UserRepository
 ) : WebSecurityConfigurerAdapter() {
 
@@ -27,17 +27,20 @@ class SecurityConfig(
 
     override fun configure(http: HttpSecurity) {
         http
-                .addFilter(corsFilter) // @CrossOrigin(인증X), 시큐리티 필터에 등록 인증 (O) -> 여기서 한방에
+                .cors()
+                .and()// @CrossOrigin(인증X), 시큐리티 필터에 등록 인증 (O) -> 여기서 한방에
                 .csrf().disable() // token 방식으로 사용
+                .exceptionHandling()
+                .and()
+                .headers()
+                .frameOptions()
+                .sameOrigin()
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 이용하지 않음
                 .and()
-                .formLogin().disable() // jwt 사용하므로 formLogin 을 사용하지 않는다.
-                .httpBasic().disable()
-                .addFilter(JwtAuthenticationFilter(authenticationManager()))
-                .addFilter(JwtAuthorizationFilter(authenticationManager(), userRepository))
                 .authorizeRequests()
                 // User
-                .antMatchers("/api/v1/user/join", "/api/v1/user/authenticated").permitAll()
+                .antMatchers("/api/v1/user/login", "/api/v1/user/join", "/api/v1/user/authenticated").permitAll()
                 .antMatchers("/api/v1/user/**").authenticated()
                 // Board Category
                 .antMatchers(HttpMethod.GET, "/api/v1/category/**").permitAll()
@@ -47,6 +50,9 @@ class SecurityConfig(
                 .antMatchers("/api/v1/board/**").authenticated()
                 // Etc...
                 .anyRequest().permitAll()
+                .and()
+                .apply(JwtSecurityConfig(tokenProvider))
+
     }
 }
 

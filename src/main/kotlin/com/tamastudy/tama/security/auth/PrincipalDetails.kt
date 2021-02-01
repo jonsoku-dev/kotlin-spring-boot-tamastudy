@@ -1,4 +1,4 @@
-package com.tamastudy.tama.config.auth
+package com.tamastudy.tama.security.auth
 
 import com.tamastudy.tama.entity.User
 import com.tamastudy.tama.mapper.UserMapper
@@ -8,9 +8,8 @@ import java.util.*
 import java.util.function.Consumer
 
 
-class PrincipalDetails(
-        private val user: User
-) : UserDetails {
+class PrincipalDetails(private var user: User) : UserDetails {
+
     override fun getAuthorities(): Collection<GrantedAuthority> {
         val authorities: MutableCollection<GrantedAuthority> = ArrayList()
         user.getRoleList().forEach(Consumer { r: String? -> authorities.add(GrantedAuthority { r }) })

@@ -22,6 +22,11 @@ class User {
             var updatedAt: LocalDateTime? = null,
     )
 
+    data class LoginUserRequest(
+            var email: String,
+            var password: String
+    )
+
     data class CreateUserRequest(
             @field:NotBlank
             @field:Length(max = 10)
@@ -39,5 +44,9 @@ class User {
             var username: String,
             @field:Length(max = 20)
             var password: String
+    )
+
+    data class TokenResponse(
+            var token: String
     )
 }

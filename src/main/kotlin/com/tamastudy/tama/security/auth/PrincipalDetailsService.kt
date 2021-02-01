@@ -1,4 +1,4 @@
-package com.tamastudy.tama.config.auth
+package com.tamastudy.tama.security.auth
 
 import com.tamastudy.tama.repository.UserRepository
 import org.springframework.security.authentication.InternalAuthenticationServiceException

@@ -1,8 +1,9 @@
 package com.tamastudy.tama.controller
 
 import com.tamastudy.tama.adapter.BoardAdapter
-import com.tamastudy.tama.config.auth.PrincipalDetails
+import com.tamastudy.tama.security.auth.PrincipalDetails
 import com.tamastudy.tama.dto.Board.*
+import com.tamastudy.tama.security.jwt.TokenProvider
 import com.tamastudy.tama.service.BoardService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -15,6 +16,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/v1/board")
 class BoardApiController(
+        private val tokenProvider: TokenProvider,
         private val boardAdapter: BoardAdapter,
         private val boardService: BoardService,
 ) {

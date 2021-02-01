@@ -74,6 +74,9 @@ dependencies {
 
     // Jwt
     implementation("com.auth0:java-jwt:3.12.0")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.2")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.2")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.2")
 
     // Map-struct
     implementation("org.mapstruct:mapstruct:1.4.1.Final")
