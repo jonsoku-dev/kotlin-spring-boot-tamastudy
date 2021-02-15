@@ -11,9 +11,10 @@ import org.springframework.data.domain.Pageable
 
 interface BoardService {
     fun findAllWithComplexPage(condition: BoardPagingCondition, pageable: Pageable): Page<BoardPaging>
-    fun findDtosWithComplexPage(condition: BoardPagingCondition, pageable: Pageable): Page<BoardDto>
-    fun findById(id: Long): BoardDto
-    fun createBoard(userDto: UserDto, categoryDto: BoardCategoryDto, createBoardCreateRequest: BoardCreateRequest): BoardDto
-    fun updateBoard(boardId: Long, userDto: UserDto, categoryDto: BoardCategoryDto, boardUpdateRequest: BoardUpdateRequest): BoardDto
+    fun findDtosWithComplexPage(condition: BoardPagingCondition, pageable: Pageable): Page<BoardFlatDto>
+    fun retrieveById(id: Long): BoardDto
+    fun findById(id: Long): BoardFlatDto
+    fun createBoard(userDto: UserDto, categoryDto: BoardCategoryDto, createBoardCreateRequest: BoardCreateRequest): BoardFlatDto
+    fun updateBoard(boardId: Long, userDto: UserDto, categoryDto: BoardCategoryDto, boardUpdateRequest: BoardUpdateRequest): BoardFlatDto
     fun deleteById(boardId: Long, userDto: UserDto)
 }

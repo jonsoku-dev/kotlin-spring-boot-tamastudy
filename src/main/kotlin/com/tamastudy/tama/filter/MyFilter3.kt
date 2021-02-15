@@ -11,13 +11,10 @@ class MyFilter3 : Filter {
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val req = request as HttpServletRequest;
         val res = response as HttpServletResponse;
-        println("필터 3 입니다.")
 
         // token: example-token
         if (req.method == "POST") {
-            println("POST 요청 됨")
             val headerAuth = req.getHeader("Authorization")
-            println(headerAuth)
             if (headerAuth == "hello") {
                 chain.doFilter(req, res)
             } else {

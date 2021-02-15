@@ -6,9 +6,5 @@ import org.mapstruct.Mapper
 import org.mapstruct.ReportingPolicy
 import org.mapstruct.factory.Mappers
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
-interface BoardCategoryMapper : EntityMapper<BoardCategoryDto, BoardCategory> {
-    companion object {
-        val MAPPER: BoardCategoryMapper = Mappers.getMapper(BoardCategoryMapper::class.java)
-    }
-}
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+interface BoardCategoryMapper : EntityMapper<BoardCategoryDto, BoardCategory> {}

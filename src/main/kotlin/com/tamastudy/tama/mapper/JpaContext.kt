@@ -17,14 +17,12 @@ class JpaContext(
 
     @BeforeMapping
     fun setEntity(@MappingTarget user: User) {
-        println("setEntity.user : $user")
         this.user = user
         // you could do stuff with the EntityManager here
     }
 
     @AfterMapping
     fun establishRelation(@MappingTarget board: Board) {
-        println("establishRelation : $board")
         val found = boardRepository.findOneWithUserById(board.id!!)
         board.user = found?.user
     }

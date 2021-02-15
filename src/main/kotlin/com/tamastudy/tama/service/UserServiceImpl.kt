@@ -6,16 +6,20 @@ import com.tamastudy.tama.entity.User
 import com.tamastudy.tama.mapper.UserMapper
 import com.tamastudy.tama.repository.UserRepository
 import javassist.NotFoundException
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class UserServiceImpl(
         private val repository: UserRepository,
-        private val bCryptPasswordEncoder: BCryptPasswordEncoder
+        private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+        private val redisTemplate: ReactiveStringRedisTemplate
 ) : UserService {
     override fun createUser(createUserRequest: CreateUserRequest): UserDto {
-        checkExistUser(createUserRequest.email)
+        if (repository.findForJoinByEmail(createUserRequest.email) != null) {
+            throw IllegalAccessException("중복이메일입니다.")
+        }
         return User().apply {
             this.username = createUserRequest.username
             this.email = createUserRequest.email
@@ -47,12 +51,8 @@ class UserServiceImpl(
         return UserMapper.MAPPER.toDto(findUserEntityById(id))
     }
 
-    private fun checkExistUser(email: String) {
-        return repository.findByEmail(email).let {
-            if (it.isPresent) {
-                throw IllegalArgumentException("$email 은 중복된 이메일입니다.")
-            }
-        }
+    private fun existUser(email: String): Boolean {
+        return repository.findByEmail(email) != null
     }
 
     private fun findUserEntityById(id: Long): User {

@@ -1,12 +1,13 @@
 package com.tamastudy.tama.controller
 
-import com.tamastudy.tama.adapter.BoardAdapter
-import com.tamastudy.tama.security.auth.PrincipalDetails
 import com.tamastudy.tama.dto.Board.*
-import com.tamastudy.tama.security.jwt.TokenProvider
+import com.tamastudy.tama.security.auth.PrincipalDetails
+import com.tamastudy.tama.service.BoardCategoryService
 import com.tamastudy.tama.service.BoardService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -16,31 +17,33 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/v1/board")
 class BoardApiController(
-        private val tokenProvider: TokenProvider,
-        private val boardAdapter: BoardAdapter,
         private val boardService: BoardService,
+        private val boardCategoryService: BoardCategoryService,
 ) {
     @GetMapping
-    fun getBoards(boardPagingCondition: BoardPagingCondition, pageable: Pageable): Page<BoardPaging> {
-        return boardService.findAllWithComplexPage(boardPagingCondition, pageable)
-    }
-
-    @GetMapping("/v2")
-    fun getBoardsV2(boardPagingCondition: BoardPagingCondition, pageable: Pageable): Page<BoardDto> {
+    fun getBoardsV2(boardPagingCondition: BoardPagingCondition,
+                    @PageableDefault(
+                            size = 12,
+                            sort = ["createdAt"],
+                            direction = Sort.Direction.DESC
+                    )
+                    pageable: Pageable): Page<BoardFlatDto> {
+        println("boardPagingCondition.categoryName: ${boardPagingCondition.categoryName}")
         return boardService.findDtosWithComplexPage(boardPagingCondition, pageable)
     }
 
     @PostMapping
     fun createBoard(
             @Valid @RequestBody boardCreateRequest: BoardCreateRequest
-    ): ResponseEntity<BoardDto> {
+    ): ResponseEntity<BoardFlatDto> {
         val userDto = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
-        val boardDto = boardAdapter.createBoard(userDto, boardCreateRequest)
+        val categoryDto = boardCategoryService.findById(boardCreateRequest.categoryId)
+        val boardDto =  boardService.createBoard(userDto, categoryDto, boardCreateRequest)
         return ResponseEntity.status(HttpStatus.CREATED).body(boardDto)
     }
 
     @GetMapping("/{boardId}")
-    fun getBoard(@PathVariable boardId: Long): ResponseEntity<BoardDto> {
+    fun getBoard(@PathVariable boardId: Long): ResponseEntity<BoardFlatDto> {
         val boardDto = boardService.findById(boardId)
         return ResponseEntity.status(HttpStatus.OK).body(boardDto)
     }
@@ -49,9 +52,14 @@ class BoardApiController(
     fun updateBoard(
             @PathVariable boardId: Long,
             @Valid @RequestBody boardUpdateRequest: BoardUpdateRequest
-    ): ResponseEntity<BoardDto> {
+    ): ResponseEntity<BoardFlatDto> {
         val userDto = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
-        val boardDto = boardAdapter.updateBoard(boardId, userDto, boardUpdateRequest)
+        val boardDto = boardService.updateBoard(
+                boardId,
+                userDto,
+                boardCategoryService.findById(boardUpdateRequest.categoryId),
+                boardUpdateRequest
+        )
         return ResponseEntity.status(HttpStatus.OK).body(boardDto)
     }
 

@@ -1,5 +1,6 @@
 package com.tamastudy.tama.entity
 
+import java.io.Serializable
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -21,7 +22,12 @@ data class User(
         @Column(updatable = false)
         var createdAt: LocalDateTime? = LocalDateTime.now(),
         var updatedAt: LocalDateTime? = LocalDateTime.now()
-)  {
+) : Serializable {
+    companion object {
+        @JvmStatic
+        private val serialVersionUID: Long = 1
+    }
+
     fun getRoleList(): MutableList<String> {
         val list = mutableListOf<String>()
         if (this.roles?.isNotEmpty() == true) {

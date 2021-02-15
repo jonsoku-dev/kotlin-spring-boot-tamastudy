@@ -5,33 +5,36 @@ import com.tamastudy.tama.entity.BoardCategory
 import com.tamastudy.tama.mapper.BoardCategoryMapper
 import com.tamastudy.tama.repository.BoardCategoryRepository
 import javassist.NotFoundException
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class BoardCategoryServiceImpl(
+        private val boardCategoryMapper: BoardCategoryMapper,
         private val repository: BoardCategoryRepository
 ) : BoardCategoryService {
     override fun createCategory(boardCategoryCreateRequest: BoardCategoryCreateRequest): BoardCategoryDto {
         val newBoardCategory = BoardCategory().apply {
             this.name = boardCategoryCreateRequest.name
         }
-        return BoardCategoryMapper.MAPPER.toDto(repository.save(newBoardCategory))
+        return boardCategoryMapper.toDto(repository.save(newBoardCategory))
     }
 
     override fun updateCategory(id: Long, boardCategoryUpdateRequest: BoardCategoryUpdateRequest): BoardCategoryDto {
         val updatedCategory = findCategory(id).apply {
             this.name = boardCategoryUpdateRequest.name
         }
-        return BoardCategoryMapper.MAPPER.toDto(repository.save(updatedCategory))
+        return boardCategoryMapper.toDto(repository.save(updatedCategory))
     }
 
     override fun findById(id: Long): BoardCategoryDto {
-        return BoardCategoryMapper.MAPPER.toDto(findCategory(id))
+        return boardCategoryMapper.toDto(findCategory(id))
     }
 
+    @Cacheable(value = ["categories"])
     override fun findAll(): List<BoardCategoryDto> {
-        return BoardCategoryMapper.MAPPER.toDtos(repository.findAll())
+        return boardCategoryMapper.toDtos(repository.findAll())
     }
 
     override fun deleteById(id: Long) {

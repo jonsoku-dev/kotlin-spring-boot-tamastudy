@@ -1,23 +1,27 @@
 package com.tamastudy.tama.config
 
+import com.tamastudy.tama.security.jwt.JwtAccessDeniedHandler
+import com.tamastudy.tama.security.jwt.JwtAuthenticationEntryPoint
 import com.tamastudy.tama.security.jwt.JwtSecurityConfig
 import com.tamastudy.tama.security.jwt.TokenProvider
-import com.tamastudy.tama.repository.UserRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.csrf.CsrfFilter
+import org.springframework.web.filter.CharacterEncodingFilter
+
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
         private val tokenProvider: TokenProvider,
-//        private val corsFilter: CorsFilter,
-        private val userRepository: UserRepository
+        private val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
+        private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint
 ) : WebSecurityConfigurerAdapter() {
 
     @Bean
@@ -25,34 +29,42 @@ class SecurityConfig(
         return BCryptPasswordEncoder()
     }
 
+    override fun configure(web: WebSecurity) {
+        web.ignoring()
+                .antMatchers("/h2-console/**", "/favicon.ico", "/error")
+    }
+
     override fun configure(http: HttpSecurity) {
+        val filter = CharacterEncodingFilter()
+        filter.encoding = "UTF-8"
+        filter.setForceEncoding(true)
+
+        http.addFilterBefore(filter, CsrfFilter::class.java)
         http
                 .cors()
-                .and()// @CrossOrigin(인증X), 시큐리티 필터에 등록 인증 (O) -> 여기서 한방에
+                .and()
                 .csrf().disable() // token 방식으로 사용
                 .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler) // enable h2-console
                 .and()
                 .headers()
                 .frameOptions()
                 .sameOrigin()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 이용하지 않음
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 이용하지 않음
                 .and()
                 .authorizeRequests()
-                // User
-                .antMatchers("/api/v1/user/login", "/api/v1/user/join", "/api/v1/user/authenticated").permitAll()
-                .antMatchers("/api/v1/user/**").authenticated()
-                // Board Category
-                .antMatchers(HttpMethod.GET, "/api/v1/category/**").permitAll()
-                .antMatchers("/api/v1/category/**").authenticated()
-                // Board
-                .antMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
-                .antMatchers("/api/v1/board/**").authenticated()
-                // Etc...
-                .anyRequest().permitAll()
+                .antMatchers("/api/v1/user/login").permitAll()
+                .antMatchers("/api/v1/user/join").permitAll()
+                .antMatchers("/api/v1/board").permitAll()
+                .antMatchers("/api/v1/board/{\\d+}").permitAll()
+                .antMatchers("/api/v1/board/{\\d+}/comment").permitAll()
+                .antMatchers("/api/v1/category").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .apply(JwtSecurityConfig(tokenProvider))
-
     }
 }
 

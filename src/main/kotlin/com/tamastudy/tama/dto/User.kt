@@ -1,7 +1,9 @@
 package com.tamastudy.tama.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.validator.constraints.Length
+import java.io.Serializable
 import java.time.Instant
 import java.time.LocalDateTime
 import javax.validation.constraints.Email
@@ -9,6 +11,7 @@ import javax.validation.constraints.NotBlank
 
 class User {
     data class UserDto(
+            @JsonProperty(value = "userId")
             var id: Long? = null,
             var username: String? = null,
             var email: String? = null,
@@ -20,7 +23,12 @@ class User {
             var createdAt: LocalDateTime? = null,
             @JsonIgnore
             var updatedAt: LocalDateTime? = null,
-    )
+    ): Serializable {
+        companion object {
+            @JvmStatic
+            private val serialVersionUID: Long = 1
+        }
+    }
 
     data class LoginUserRequest(
             var email: String,

@@ -8,8 +8,14 @@ server:
       enabled: true
       force: true
 
-
 spring:
+  redis:
+    host: 127.0.0.1
+    port: 6380
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
   datasource:
     url: jdbc:mysql://127.0.0.1:3308/ta
     username: the2792

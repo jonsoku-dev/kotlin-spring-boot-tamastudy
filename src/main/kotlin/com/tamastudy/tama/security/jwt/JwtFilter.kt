@@ -2,6 +2,7 @@ package com.tamastudy.tama.security.jwt
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.util.StringUtils
@@ -19,9 +20,13 @@ class JwtFilter(private val tokenProvider: TokenProvider) : GenericFilterBean() 
         const val AUTHORIZATION_HEADER = "Authorization"
     }
 
-    private fun resolveToken(request: HttpServletRequest) = request.getHeader(AUTHORIZATION_HEADER)?.substring(7)
+    private fun resolveToken(request: HttpServletRequest): String? {
+        if (request.getHeader(AUTHORIZATION_HEADER) == "x") {
+            return ""
+        }
+        return request.getHeader(AUTHORIZATION_HEADER)?.substring(7)
+    }
 
-    @Throws(IOException::class, ServletException::class)
     override fun doFilter(servletRequest: ServletRequest, servletResponse: ServletResponse, filterChain: FilterChain) {
         val httpServletRequest = servletRequest as HttpServletRequest
         val jwt = resolveToken(httpServletRequest)
@@ -31,6 +36,7 @@ class JwtFilter(private val tokenProvider: TokenProvider) : GenericFilterBean() 
             SecurityContextHolder.getContext().authentication = authentication
             Companion.logger.debug("Security Context 에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication?.name, requestURI)
         } else {
+            SecurityContextHolder.getContext().authentication = null
             Companion.logger.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI)
         }
         filterChain.doFilter(servletRequest, servletResponse)

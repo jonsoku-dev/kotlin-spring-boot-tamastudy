@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
@@ -25,7 +26,7 @@ class TokenProvider(
 
     private val logger: Logger = LoggerFactory.getLogger(TokenProvider::class.java)
 
-    private val CLAIM_ID = "id"
+    private val CLAIM_KEY = "email"
 
     private var secret: String? = null
     private var tokenValidityInMilliseconds: Long = 0
@@ -45,12 +46,11 @@ class TokenProvider(
 
     fun createToken(authentication: Authentication): String? {
         val userDetails = authentication.principal as PrincipalDetails
-        println("userDto: ${userDetails.getUserDto()}")
         val now: Long = Date().time
         val validity = Date(now + tokenValidityInMilliseconds)
         return Jwts.builder()
                 .setSubject(authentication.name)
-                .claim(CLAIM_ID, userDetails.getId())
+                .claim(CLAIM_KEY, userDetails.getUserEntity().email)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact()
@@ -64,15 +64,11 @@ class TokenProvider(
                 .parseClaimsJws(token)
                 .body
 
-        println("=====")
-        println(claims)
-        println("=====")
+        val userEmail = claims[CLAIM_KEY].toString()
 
-        val userId = claims[CLAIM_ID].toString().toLong()
-
-        val principalDetails = userRepository.findByIdOrNull(userId)?.let { userEntity ->
+        val principalDetails = userRepository.findByEmail(userEmail)?.let { userEntity ->
             PrincipalDetails(userEntity)
-        } ?: throw IllegalArgumentException("유저가 존재하지 않습니다. 토큰을 확인해주세요. ")
+        } ?: throw AccessDeniedException("유저가 존재하지 않습니다. 토큰을 확인해주세요. ")
 
         return UsernamePasswordAuthenticationToken(principalDetails, token, principalDetails.authorities)
     }

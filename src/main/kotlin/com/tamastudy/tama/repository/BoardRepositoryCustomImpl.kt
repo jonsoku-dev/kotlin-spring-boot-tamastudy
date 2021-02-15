@@ -1,14 +1,13 @@
 package com.tamastudy.tama.repository
 
-import com.querydsl.core.types.Projections
+import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.sun.org.apache.xpath.internal.operations.Bool
 import com.tamastudy.tama.dto.Board.*
-import com.tamastudy.tama.dto.BoardCategory
-import com.tamastudy.tama.dto.BoardCategory.BoardCategoryDto
 import com.tamastudy.tama.dto.QBoard_BoardPaging
-import com.tamastudy.tama.dto.User
-import com.tamastudy.tama.dto.User.UserDto
 import com.tamastudy.tama.entity.Board
+import com.tamastudy.tama.entity.QBoard
 import com.tamastudy.tama.entity.QBoard.board
 import com.tamastudy.tama.entity.QBoardCategory.boardCategory
 import com.tamastudy.tama.entity.QUser.user
@@ -18,10 +17,12 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
+import org.springframework.util.StringUtils.hasText
 import javax.persistence.EntityManager
 
 @Repository
 class BoardRepositoryCustomImpl(
+        private val boardMapper: BoardMapper,
         private val em: EntityManager
 ) : BoardRepositoryCustom {
 
@@ -95,29 +96,29 @@ class BoardRepositoryCustomImpl(
                 .fetchOne()
     }
 
-    override fun searchPageDto(condition: BoardPagingCondition, pageable: Pageable): Page<BoardDto> {
+    override fun searchPageDto(condition: BoardPagingCondition, pageable: Pageable): Page<BoardFlatDto> {
         val test = queryFactory
                 .select(board)
                 .from(board)
                 .join(board.user, user).fetchJoin()
                 .join(board.category, boardCategory).fetchJoin()
+                .where(categoryNameEq(condition.categoryName), keywordLike(condition.keyword))
                 .offset(pageable.offset)
+                .orderBy(board.createdAt.desc())
                 .limit(pageable.pageSize.toLong())
                 .fetch()
 
-        println("test : $test")
 
-        val content = test.map {
-            BoardMapper.MAPPER.toDto(it)
+        val content = test.map { board ->
+            boardMapper.toFlatDto(board)
         }
-
-        println("content : $content")
 
         val countQuery = queryFactory
                 .select(board)
                 .from(board)
                 .leftJoin(board.user, user)
                 .leftJoin(board.category, boardCategory)
+                .where(categoryNameEq(condition.categoryName), keywordLike(condition.keyword))
 
         return PageableExecutionUtils.getPage(
                 content,
@@ -126,4 +127,15 @@ class BoardRepositoryCustomImpl(
             countQuery.fetchCount()
         }
     }
+
+    private fun keywordLike(keyword: String?): BooleanExpression? {
+        if (keyword == null) return null;
+        return board.title.like(Expressions.asString("%").concat(keyword).concat("%"))
+    }
+
+    private fun categoryNameEq(categoryName: String?): BooleanExpression? {
+        if (categoryName == null) return null;
+        return board.category.name.eq(categoryName);
+    }
+
 }
