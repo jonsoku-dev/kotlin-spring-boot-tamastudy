@@ -13,5 +13,5 @@ interface CommentService {
     fun save(boardDto: Board.BoardDto, userDto: UserDto, commentCreateRequest: CommentCreateRequest): CommentDto
     fun searchPageDto(boardId: Long, pageable: Pageable): Page<CommentFlatDto>
     fun findAllFlatDto(boardId: Long): List<CommentFlatDto>
-    fun findAllDto(boardId: Long): List<CommentDto>
+    fun findAllDto(boardId: Long): List<CommentResponseDto>
 }

@@ -93,7 +93,7 @@ class CommentServiceImpl(
     }
 
     //    @Cacheable(value = ["comments"], key = "#boardId")
-    override fun findAllDto(boardId: Long): List<CommentDto> {
+    override fun findAllDto(boardId: Long): List<CommentResponseDto> {
         return commentRepository.findAllDto(boardId)
     }
 }

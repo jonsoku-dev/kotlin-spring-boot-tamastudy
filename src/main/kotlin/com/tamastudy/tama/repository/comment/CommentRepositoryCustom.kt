@@ -9,6 +9,6 @@ import org.springframework.data.domain.Pageable
 interface CommentRepositoryCustom {
     fun searchPageDto(boardId: Long, pageable: Pageable): Page<CommentFlatDto>
     fun findAllFlatDto(boardId: Long): List<CommentFlatDto>
-    fun findAllDto(boardId: Long) : List<CommentDto>
+    fun findAllDto(boardId: Long) : List<Comment.CommentResponseDto>
     fun testing(boardId: Long)
 }
