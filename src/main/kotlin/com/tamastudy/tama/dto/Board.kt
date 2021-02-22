@@ -66,6 +66,10 @@ class Board {
             var keyword: String? = null
     )
 
+    data class BoardIds @QueryProjection constructor(
+            var boardId: Long? = null
+    )
+
     data class BoardPaging @QueryProjection constructor(
             var boardId: Long? = null,
             var title: String? = null,

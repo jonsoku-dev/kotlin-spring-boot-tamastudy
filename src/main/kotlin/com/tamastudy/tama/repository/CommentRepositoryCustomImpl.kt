@@ -6,6 +6,7 @@ import com.tamastudy.tama.dto.Comment.CommentDto
 import com.tamastudy.tama.dto.Comment.CommentFlatDto
 import com.tamastudy.tama.entity.QBoard
 import com.tamastudy.tama.entity.QBoard.board
+import com.tamastudy.tama.entity.QBoardCategory
 import com.tamastudy.tama.entity.QComment
 import com.tamastudy.tama.entity.QComment.comment
 import com.tamastudy.tama.entity.QUser
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
 import javax.persistence.EntityManager
+import kotlin.math.log
 
 @Repository
 class CommentRepositoryCustomImpl(
@@ -24,17 +26,53 @@ class CommentRepositoryCustomImpl(
 ) : CommentRepositoryCustom {
 
     private val queryFactory: JPAQueryFactory = JPAQueryFactory(em)
-
-    override fun findAllFlatDto(boardId: Long): List<CommentFlatDto> {
-        val result = queryFactory
-                .selectFrom(comment)
+    override fun testing(boardId: Long) {
+        val commentList = queryFactory
+                .select(comment)
+                .from(comment)
                 .join(comment.user, user).fetchJoin()
                 .where(comment.board.id.eq(boardId))
-                .orderBy(comment.createdAt.desc())
                 .fetch()
 
-        return result.map {
+        val result = commentList.map {
+            commentMapper.toDto(it)
+        }
+        println(result)
+    }
+
+    override fun findAllFlatDto(boardId: Long): List<CommentFlatDto> {
+        val superResult = queryFactory
+                .select(comment)
+                .from(comment)
+                .where(comment.board.id.eq(boardId))
+                .fetch()
+
+        return superResult.map {
             commentMapper.toFlatDto(it)
+        }
+    }
+
+    override fun findAllDto(boardId: Long): List<CommentDto> {
+        val superResult = queryFactory
+                .select(comment)
+                .from(comment)
+                .join(comment.user, user).fetchJoin()
+                .join(comment.board, board).fetchJoin()
+                .where(comment.board.id.eq(boardId), comment.level.eq(1), comment.superComment.isNull)
+                .fetch()
+
+        superResult.forEach {
+            it.subComment = queryFactory
+                    .select(comment)
+                    .from(comment)
+                    .join(comment.user, user).fetchJoin()
+                    .join(comment.board, board).fetchJoin()
+                    .where(comment.board.id.eq(boardId), comment.level.eq(2), comment.superComment.id.eq(it.id))
+                    .fetch()
+        }
+
+        return superResult.map {
+            commentMapper.toDto(it)
         }
     }
 

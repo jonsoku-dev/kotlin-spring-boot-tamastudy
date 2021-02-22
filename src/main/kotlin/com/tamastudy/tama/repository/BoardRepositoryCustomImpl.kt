@@ -3,21 +3,17 @@ package com.tamastudy.tama.repository
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.sun.org.apache.xpath.internal.operations.Bool
 import com.tamastudy.tama.dto.Board.*
+import com.tamastudy.tama.dto.QBoard_BoardIds
 import com.tamastudy.tama.dto.QBoard_BoardPaging
 import com.tamastudy.tama.entity.Board
-import com.tamastudy.tama.entity.QBoard
 import com.tamastudy.tama.entity.QBoard.board
 import com.tamastudy.tama.entity.QBoardCategory.boardCategory
 import com.tamastudy.tama.entity.QUser.user
 import com.tamastudy.tama.mapper.BoardMapper
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.*
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
-import org.springframework.util.StringUtils.hasText
 import javax.persistence.EntityManager
 
 @Repository
@@ -27,6 +23,15 @@ class BoardRepositoryCustomImpl(
 ) : BoardRepositoryCustom {
 
     private val queryFactory: JPAQueryFactory = JPAQueryFactory(em)
+
+    override fun findIds(): MutableList<BoardIds> {
+        return queryFactory
+                .select(QBoard_BoardIds(
+                        board.id.`as`("boardId")
+                ))
+                .from(board)
+                .fetch()
+    }
 
     override fun searchPageSimple(condition: BoardPagingCondition, pageable: Pageable): Page<BoardPaging> {
         val result = queryFactory
@@ -119,6 +124,38 @@ class BoardRepositoryCustomImpl(
                 .leftJoin(board.user, user)
                 .leftJoin(board.category, boardCategory)
                 .where(categoryNameEq(condition.categoryName), keywordLike(condition.keyword))
+
+        return PageableExecutionUtils.getPage(
+                content,
+                pageable
+        ) {
+            countQuery.fetchCount()
+        }
+    }
+
+    override fun searchSliceDto(condition: BoardPagingCondition, pageable: Pageable): Slice<BoardFlatDto> {
+        val test = queryFactory
+                .select(board)
+                .from(board)
+                .join(board.user, user).fetchJoin()
+                .join(board.category, boardCategory).fetchJoin()
+                .where(categoryNameEq(condition.categoryName), keywordLike(condition.keyword))
+                .offset(pageable.offset)
+                .orderBy(board.createdAt.desc())
+                .limit(pageable.pageSize.toLong())
+                .fetch()
+
+
+        val countQuery = queryFactory
+                .select(board)
+                .from(board)
+                .leftJoin(board.user, user)
+                .leftJoin(board.category, boardCategory)
+                .where(categoryNameEq(condition.categoryName), keywordLike(condition.keyword))
+
+        val content = test.map { board ->
+            boardMapper.toFlatDto(board)
+        }
 
         return PageableExecutionUtils.getPage(
                 content,

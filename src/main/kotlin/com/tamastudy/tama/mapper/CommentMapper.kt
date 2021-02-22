@@ -15,12 +15,14 @@ interface CommentMapper : EntityMapper<CommentDto, Comment> {
     @Mappings(
             Mapping(target = "user", source = "dto.user"),
             Mapping(target = "board", source = "dto.board"),
+            Mapping(target = "superComment", source = "dto.superComment"),
     )
     override fun toEntity(dto: CommentDto): Comment
 
     @Mappings(
             Mapping(target = "user", source = "entity.user"),
             Mapping(target = "board", source = "entity.board"),
+            Mapping(target = "superComment", source = "entity.superComment"),
     )
     override fun toDto(entity: Comment): CommentDto
 
@@ -28,6 +30,8 @@ interface CommentMapper : EntityMapper<CommentDto, Comment> {
             Mapping(target = "commentId", source = "entity.id"),
             Mapping(target = "userId", source = "entity.user.id"),
             Mapping(target = "username", source = "entity.user.username"),
+//            Mapping(target = "superComment", source = "entity.superComment"),
+            Mapping(target = "subComment", source = "entity.subComment"),
     )
     fun toFlatDto(entity: Comment): CommentFlatDto
 

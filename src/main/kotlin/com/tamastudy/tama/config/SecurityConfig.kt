@@ -1,17 +1,19 @@
 package com.tamastudy.tama.config
 
-import com.tamastudy.tama.security.jwt.JwtAccessDeniedHandler
-import com.tamastudy.tama.security.jwt.JwtAuthenticationEntryPoint
-import com.tamastudy.tama.security.jwt.JwtSecurityConfig
-import com.tamastudy.tama.security.jwt.TokenProvider
+import com.tamastudy.tama.filter.JwtFilter
+import com.tamastudy.tama.service.CustomUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.BeanIds
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.csrf.CsrfFilter
 import org.springframework.web.filter.CharacterEncodingFilter
 
@@ -19,14 +21,22 @@ import org.springframework.web.filter.CharacterEncodingFilter
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-        private val tokenProvider: TokenProvider,
-        private val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
-        private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint
+        private val userDetailsService: CustomUserDetailsService,
+        private val jwtFilter: JwtFilter,
 ) : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun passwordEncoder(): BCryptPasswordEncoder {
         return BCryptPasswordEncoder()
+    }
+
+    override fun configure(auth: AuthenticationManagerBuilder) {
+        auth.userDetailsService(userDetailsService)
+    }
+
+    @Bean(name = [BeanIds.AUTHENTICATION_MANAGER])
+    override fun authenticationManagerBean(): AuthenticationManager {
+        return super.authenticationManagerBean()
     }
 
     override fun configure(web: WebSecurity) {
@@ -45,26 +55,27 @@ class SecurityConfig(
                 .and()
                 .csrf().disable() // token 방식으로 사용
                 .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler) // enable h2-console
                 .and()
                 .headers()
                 .frameOptions()
                 .sameOrigin()
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 이용하지 않음
-                .and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/user/login").permitAll()
                 .antMatchers("/api/v1/user/join").permitAll()
                 .antMatchers("/api/v1/board").permitAll()
+                .antMatchers("/api/v1/board/ids").permitAll()
+                .antMatchers("/api/v2/board").permitAll()
                 .antMatchers("/api/v1/board/{\\d+}").permitAll()
                 .antMatchers("/api/v1/board/{\\d+}/comment").permitAll()
+                .antMatchers("/api/v1/board/{\\d+}/comment/test").permitAll()
                 .antMatchers("/api/v1/category").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .apply(JwtSecurityConfig(tokenProvider))
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 이용하지 않음
+
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 }
 

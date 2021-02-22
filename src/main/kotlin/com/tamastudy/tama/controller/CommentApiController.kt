@@ -1,13 +1,9 @@
 package com.tamastudy.tama.controller
 
 import com.tamastudy.tama.dto.Board.BoardDto
-import com.tamastudy.tama.dto.Comment
 import com.tamastudy.tama.dto.Comment.*
-import com.tamastudy.tama.mapper.BoardMapper
-import com.tamastudy.tama.repository.BoardRepository
-import com.tamastudy.tama.security.auth.PrincipalDetails
-import com.tamastudy.tama.service.BoardService
 import com.tamastudy.tama.service.CommentService
+import com.tamastudy.tama.util.PrincipalDetails
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -24,7 +20,7 @@ class CommentApiController(
         private val commentService: CommentService,
 ) {
     @PostMapping("/{boardId}/comment")
-    fun createComment(@PathVariable boardId: Long, @Valid @RequestBody commentCreateRequest: CommentCreateRequest): ResponseEntity<CommentFlatDto> {
+    fun createComment(@PathVariable boardId: Long, @Valid @RequestBody commentCreateRequest: CommentCreateRequest): ResponseEntity<CommentDto> {
         val userDto = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
         val boardDto = BoardDto().apply {
             this.id = boardId
@@ -61,7 +57,7 @@ class CommentApiController(
     }
 
     @GetMapping("/{boardId}/comment")
-    fun findAll(@PathVariable boardId: Long): ResponseEntity<List<CommentFlatDto>> {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.findAll(boardId))
+    fun findAll(@PathVariable boardId: Long): ResponseEntity<List<CommentDto>> {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.findAllDto(boardId))
     }
 }

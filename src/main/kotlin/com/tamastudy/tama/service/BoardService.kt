@@ -8,10 +8,13 @@ import com.tamastudy.tama.entity.BoardCategory
 import com.tamastudy.tama.entity.User
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 
 interface BoardService {
+    fun findIds(): MutableList<BoardIds>
     fun findAllWithComplexPage(condition: BoardPagingCondition, pageable: Pageable): Page<BoardPaging>
-    fun findDtosWithComplexPage(condition: BoardPagingCondition, pageable: Pageable): Page<BoardFlatDto>
+    fun findDtosWithPage(condition: BoardPagingCondition, pageable: Pageable): Page<BoardFlatDto>
+    fun findDtosWithSlice(condition: BoardPagingCondition, pageable: Pageable): Slice<BoardFlatDto>
     fun retrieveById(id: Long): BoardDto
     fun findById(id: Long): BoardFlatDto
     fun createBoard(userDto: UserDto, categoryDto: BoardCategoryDto, createBoardCreateRequest: BoardCreateRequest): BoardFlatDto

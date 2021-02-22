@@ -2,8 +2,10 @@ package com.tamastudy.tama.service
 
 import com.tamastudy.tama.dto.Board.*
 import com.tamastudy.tama.dto.BoardCategory.BoardCategoryDto
+import com.tamastudy.tama.dto.QBoard_BoardIds
 import com.tamastudy.tama.dto.User.UserDto
 import com.tamastudy.tama.entity.Board
+import com.tamastudy.tama.entity.QBoard
 import com.tamastudy.tama.mapper.BoardCategoryMapper
 import com.tamastudy.tama.mapper.BoardMapper
 import com.tamastudy.tama.mapper.UserMapper
@@ -12,6 +14,7 @@ import javassist.NotFoundException
 import org.springframework.cache.annotation.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -23,18 +26,33 @@ class BoardServiceImpl(
         private val boardCategoryMapper: BoardCategoryMapper,
         private val repository: BoardRepository,
 ) : BoardService {
+    override fun findIds(): MutableList<BoardIds> {
+        return repository.findIds()
+    }
+
     override fun findAllWithComplexPage(condition: BoardPagingCondition, pageable: Pageable): Page<BoardPaging> {
         return repository.searchPageComplex(condition, pageable)
     }
 
     @Cacheable(value = ["boards"], keyGenerator = "boardCacheGenerator")
-    override fun findDtosWithComplexPage(condition: BoardPagingCondition, pageable: Pageable): Page<BoardFlatDto> {
+    override fun findDtosWithPage(condition: BoardPagingCondition, pageable: Pageable): Page<BoardFlatDto> {
         return repository.searchPageDto(condition, pageable)
+    }
+
+    @Cacheable(value = ["boards"], keyGenerator = "boardCacheGenerator")
+    override fun findDtosWithSlice(condition: BoardPagingCondition, pageable: Pageable): Slice<BoardFlatDto> {
+        return repository.searchSliceDto(condition, pageable)
     }
 
     @Cacheable(value = ["board"], key = "#id")
     override fun findById(id: Long): BoardFlatDto {
-        val foundBoard = findBoard(id)
+        val foundBoard = repository.findById(id).let {
+            if (it.isPresent) {
+                it.get()
+            } else {
+                throw NotFoundException("$id 에 해당하는 게시물을 찾을 수 없습니다.")
+            }
+        }
         return boardMapper.toFlatDto(foundBoard)
     }
 
@@ -63,9 +81,16 @@ class BoardServiceImpl(
         CacheEvict(value = ["board"], key = "#boardId")
     ])
     override fun updateBoard(boardId: Long, userDto: UserDto, categoryDto: BoardCategoryDto, boardUpdateRequest: BoardUpdateRequest): BoardFlatDto {
-        val foundBoard = findBoard(boardId)
+        val foundBoard = repository.findById(boardId).let {
+            if (it.isPresent) {
+                it.get()
+            } else {
+                throw NotFoundException("$boardId 에 해당하는 게시물을 찾을 수 없습니다.")
+            }
+        }
 
-        if (foundBoard.user!! != userMapper.toEntity(userDto)) {
+
+        if (foundBoard.user?.id!! != userMapper.toEntity(userDto).id) {
             throw IllegalAccessException("권한이 없습니다.")
         }
 
@@ -83,22 +108,20 @@ class BoardServiceImpl(
         CacheEvict(value = ["board"], key = "#boardId")
     ])
     override fun deleteById(boardId: Long, userDto: UserDto) {
-        findBoard(boardId).let { board ->
+
+        val foundBoard = repository.findById(boardId).let {
+            if (it.isPresent) {
+                it.get()
+            } else {
+                throw NotFoundException("$boardId 에 해당하는 게시물을 찾을 수 없습니다.")
+            }
+        }
+
+        foundBoard.let { board ->
             if (board.user?.id != userMapper.toEntity(userDto).id) {
                 throw IllegalAccessException("권한이 없습니다.")
             }
             repository.delete(board)
         }
     }
-
-    private fun findBoard(id: Long): Board {
-        return repository.findById(id).let {
-            if (it.isPresent) {
-                it.get()
-            } else {
-                throw NotFoundException("$id 에 해당하는 게시물을 찾을 수 없습니다.")
-            }
-        }
-    }
-
 }

@@ -1,4 +1,4 @@
-package com.tamastudy.tama.security.auth
+package com.tamastudy.tama.util
 
 import com.tamastudy.tama.entity.User
 import com.tamastudy.tama.mapper.UserMapper
