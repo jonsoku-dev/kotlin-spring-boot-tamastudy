@@ -1,9 +1,11 @@
-package com.tamastudy.tama.service
+package com.tamastudy.tama.service.category
 
-import com.tamastudy.tama.dto.BoardCategory.*
+import com.tamastudy.tama.dto.BoardCategoryCreateRequest
+import com.tamastudy.tama.dto.BoardCategoryDto
+import com.tamastudy.tama.dto.BoardCategoryUpdateRequest
 import com.tamastudy.tama.entity.BoardCategory
 import com.tamastudy.tama.mapper.BoardCategoryMapper
-import com.tamastudy.tama.repository.BoardCategoryRepository
+import com.tamastudy.tama.repository.category.BoardCategoryRepository
 import javassist.NotFoundException
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.repository.findByIdOrNull

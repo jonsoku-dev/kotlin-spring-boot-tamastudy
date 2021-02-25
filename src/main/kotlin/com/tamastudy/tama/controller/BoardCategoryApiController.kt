@@ -1,7 +1,9 @@
 package com.tamastudy.tama.controller
 
-import com.tamastudy.tama.dto.BoardCategory.*
-import com.tamastudy.tama.service.BoardCategoryService
+import com.tamastudy.tama.dto.BoardCategoryCreateRequest
+import com.tamastudy.tama.dto.BoardCategoryDto
+import com.tamastudy.tama.dto.BoardCategoryUpdateRequest
+import com.tamastudy.tama.service.category.BoardCategoryService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

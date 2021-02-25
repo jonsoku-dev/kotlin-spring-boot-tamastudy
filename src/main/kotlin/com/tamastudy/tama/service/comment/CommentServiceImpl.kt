@@ -1,17 +1,11 @@
-package com.tamastudy.tama.service
+package com.tamastudy.tama.service.comment
 
-import com.tamastudy.tama.dto.Board
-import com.tamastudy.tama.dto.Comment
-import com.tamastudy.tama.dto.Comment.*
-import com.tamastudy.tama.dto.User
+import com.tamastudy.tama.dto.*
 import com.tamastudy.tama.mapper.BoardMapper
 import com.tamastudy.tama.mapper.CommentMapper
 import com.tamastudy.tama.mapper.UserMapper
-import com.tamastudy.tama.repository.CommentRepository
+import com.tamastudy.tama.repository.comment.CommentRepository
 import javassist.NotFoundException
-import org.springframework.cache.annotation.CacheEvict
-import org.springframework.cache.annotation.Cacheable
-import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -31,7 +25,7 @@ class CommentServiceImpl(
 //        CacheEvict(value = ["board"], key = "#boardDto.id"),
 //        CacheEvict(value = ["comments"], allEntries = true)
 //    ])
-    override fun save(boardDto: Board.BoardDto, userDto: User.UserDto, commentCreateRequest: CommentCreateRequest): CommentDto {
+    override fun save(boardDto: BoardDto, userDto: UserDto, commentCreateRequest: CommentCreateRequest): CommentDto {
         val userEntity = userMapper.toEntity(userDto)
         val boardEntity = boardMapper.toEntity(boardDto)
         val newComment = com.tamastudy.tama.entity.Comment()
@@ -61,7 +55,7 @@ class CommentServiceImpl(
 //        CacheEvict(value = ["board"], key = "#boardId"),
 //        CacheEvict(value = ["comments"], allEntries = true)
 //    ])
-    override fun update(boardId: Long, commentId: Long, userDto: User.UserDto, commentUpdateRequest: Comment.CommentUpdateRequest): CommentFlatDto {
+    override fun update(boardId: Long, commentId: Long, userDto: UserDto, commentUpdateRequest: CommentUpdateRequest): CommentFlatDto {
         val comment = commentRepository.findById(commentId)
         if (!comment.isPresent) throw NotFoundException("찾을 수 없습니다.")
         if (comment.get().user?.id != userDto.id) throw IllegalAccessException("권한이 없습니다.")
@@ -75,7 +69,7 @@ class CommentServiceImpl(
 //        CacheEvict(value = ["board"], key = "#boardId"),
 //        CacheEvict(value = ["comments"], allEntries = true)
 //    ])
-    override fun delete(boardId: Long, commentId: Long, userDto: User.UserDto) {
+    override fun delete(boardId: Long, commentId: Long, userDto: UserDto) {
         val comment = commentRepository.findById(commentId)
         if (!comment.isPresent) throw NotFoundException("찾을 수 없습니다.")
         if (comment.get().user?.id != userDto.id) throw IllegalAccessException("권한이 없습니다.")

@@ -1,7 +1,7 @@
 package com.tamastudy.tama.handler
 
 import com.tamastudy.tama.controller.BoardApiController
-import com.tamastudy.tama.dto.Error.ErrorResponse
+import com.tamastudy.tama.dto.ErrorResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice

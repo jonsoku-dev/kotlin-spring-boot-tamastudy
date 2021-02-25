@@ -2,12 +2,10 @@ package com.tamastudy.tama.mapper
 
 import com.tamastudy.tama.entity.Board
 import com.tamastudy.tama.entity.User
-import com.tamastudy.tama.repository.BoardRepository
-import com.tamastudy.tama.repository.UserRepository
+import com.tamastudy.tama.repository.board.BoardRepository
 import org.mapstruct.AfterMapping
 import org.mapstruct.BeforeMapping
 import org.mapstruct.MappingTarget
-import javax.persistence.EntityManager
 
 
 class JpaContext(

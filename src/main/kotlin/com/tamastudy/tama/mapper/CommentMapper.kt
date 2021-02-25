@@ -1,7 +1,8 @@
 package com.tamastudy.tama.mapper
 
-import com.tamastudy.tama.dto.Comment.CommentDto
-import com.tamastudy.tama.dto.Comment.CommentFlatDto
+import com.tamastudy.tama.dto.CommentDto
+import com.tamastudy.tama.dto.CommentFlatDto
+import com.tamastudy.tama.dto.CommentResponseDto
 import com.tamastudy.tama.entity.Comment
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
@@ -9,7 +10,7 @@ import org.mapstruct.Mappings
 import org.mapstruct.ReportingPolicy
 
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = [UserMapper::class])
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = [UserMapper::class, BoardMapper::class])
 interface CommentMapper : EntityMapper<CommentDto, Comment> {
 
     @Mappings(
@@ -25,6 +26,15 @@ interface CommentMapper : EntityMapper<CommentDto, Comment> {
             Mapping(target = "superComment", source = "entity.superComment"),
     )
     override fun toDto(entity: Comment): CommentDto
+
+    @Mappings(
+            Mapping(target = "commentId", source = "entity.id"),
+            Mapping(target = "userId", source = "entity.user.id"),
+            Mapping(target = "username", source = "entity.user.username"),
+    )
+    fun toResponseDto(entity: Comment): CommentResponseDto
+
+    fun toResponseDtos(entities: List<Comment>): List<CommentResponseDto>
 
     @Mappings(
             Mapping(target = "commentId", source = "entity.id"),

@@ -1,8 +1,7 @@
 package com.tamastudy.tama.controller
 
-import com.tamastudy.tama.dto.Board.BoardDto
-import com.tamastudy.tama.dto.Comment.*
-import com.tamastudy.tama.service.CommentService
+import com.tamastudy.tama.dto.*
+import com.tamastudy.tama.service.comment.CommentService
 import com.tamastudy.tama.util.PrincipalDetails
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -19,9 +18,11 @@ import javax.validation.Valid
 class CommentApiController(
         private val commentService: CommentService,
 ) {
+
     @PostMapping("/{boardId}/comment")
     fun createComment(@PathVariable boardId: Long, @Valid @RequestBody commentCreateRequest: CommentCreateRequest): ResponseEntity<CommentDto> {
         val userDto = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
+        println(SecurityContextHolder.getContext().authentication)
         val boardDto = BoardDto().apply {
             this.id = boardId
         }
@@ -51,13 +52,13 @@ class CommentApiController(
                     sort = ["createdAt"],
                     direction = Sort.Direction.DESC
             )
-            pageable: Pageable
+            pageable: Pageable,
     ): Page<CommentFlatDto> {
         return commentService.searchPageDto(boardId, pageable)
     }
 
     @GetMapping("/{boardId}/comment")
-    fun findAll(@PathVariable boardId: Long): ResponseEntity<List<CommentDto>> {
+    fun findAll(@PathVariable boardId: Long): ResponseEntity<List<CommentResponseDto>> {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.findAllDto(boardId))
     }
 }

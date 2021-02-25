@@ -1,9 +1,8 @@
-package com.tamastudy.tama.repository
+package com.tamastudy.tama.repository.comment
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.tamastudy.tama.dto.Comment
-import com.tamastudy.tama.dto.Comment.CommentDto
-import com.tamastudy.tama.dto.Comment.CommentFlatDto
+import com.tamastudy.tama.dto.CommentFlatDto
+import com.tamastudy.tama.dto.CommentResponseDto
 import com.tamastudy.tama.entity.QComment.comment
 import com.tamastudy.tama.entity.QUser.user
 import com.tamastudy.tama.mapper.CommentMapper
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
-import java.util.*
 import javax.persistence.EntityManager
 
 
@@ -72,29 +70,14 @@ class CommentRepositoryCustomImpl(
         }
     }
 
-    override fun findAllDto(boardId: Long): List<Comment.CommentResponseDto> {
-        val result = queryFactory.selectFrom(comment)
+    override fun findAllDto(boardId: Long): List<CommentResponseDto> {
+        val entities = queryFactory.selectFrom(comment)
                 .leftJoin(comment.superComment).fetchJoin()
                 .where(comment.board.id.eq(boardId), comment.level.eq(1))
                 .orderBy(
                         comment.superComment.id.asc().nullsFirst(),
                         comment.createdAt.asc()
                 ).fetch()
-
-        println("====================")
-        return result.map {
-            commentMapper.toResponseDto(it)
-        }
+        return commentMapper.toResponseDtos(entities)
     }
-
-//    private fun convertNestedStructure(comments: List<com.tamastudy.tama.entity.Comment>): List<Comment.CommentResponseDto> {
-//        val result: MutableList<Comment.CommentResponseDto> = mutableListOf()
-//        val map: MutableMap<Long?, Comment.CommentResponseDto> = hashMapOf()
-//        comments.forEach { c ->
-//            val dto = commentMapper.toResponseDto(c)
-//            map[dto.commentId] = dto
-//            if (c.superComment != null) map[c.superComment?.id]?.subComment?.add(dto) else result.add(dto)
-//        }
-//        return result
-//    }
 }

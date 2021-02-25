@@ -1,17 +1,15 @@
-package com.tamastudy.tama.service
+package com.tamastudy.tama.service.board
 
-import com.tamastudy.tama.dto.Board.*
-import com.tamastudy.tama.dto.BoardCategory.BoardCategoryDto
-import com.tamastudy.tama.dto.QBoard_BoardIds
-import com.tamastudy.tama.dto.User.UserDto
+import com.tamastudy.tama.dto.*
 import com.tamastudy.tama.entity.Board
-import com.tamastudy.tama.entity.QBoard
 import com.tamastudy.tama.mapper.BoardCategoryMapper
 import com.tamastudy.tama.mapper.BoardMapper
 import com.tamastudy.tama.mapper.UserMapper
-import com.tamastudy.tama.repository.BoardRepository
+import com.tamastudy.tama.repository.board.BoardRepository
 import javassist.NotFoundException
-import org.springframework.cache.annotation.*
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice

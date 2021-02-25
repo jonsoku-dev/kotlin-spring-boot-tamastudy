@@ -1,7 +1,7 @@
 package com.tamastudy.tama.mapper
 
-import com.tamastudy.tama.dto.Board.BoardDto
-import com.tamastudy.tama.dto.Board.BoardFlatDto
+import com.tamastudy.tama.dto.BoardDto
+import com.tamastudy.tama.dto.BoardFlatDto
 import com.tamastudy.tama.entity.Board
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping

@@ -1,9 +1,9 @@
 package com.tamastudy.tama.controller
 
-import com.tamastudy.tama.dto.Board.*
+import com.tamastudy.tama.dto.*
+import com.tamastudy.tama.service.board.BoardService
+import com.tamastudy.tama.service.category.BoardCategoryService
 import com.tamastudy.tama.util.PrincipalDetails
-import com.tamastudy.tama.service.BoardCategoryService
-import com.tamastudy.tama.service.BoardService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice

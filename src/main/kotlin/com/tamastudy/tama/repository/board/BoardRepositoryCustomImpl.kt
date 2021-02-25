@@ -1,11 +1,9 @@
-package com.tamastudy.tama.repository
+package com.tamastudy.tama.repository.board
 
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.tamastudy.tama.dto.Board.*
-import com.tamastudy.tama.dto.QBoard_BoardIds
-import com.tamastudy.tama.dto.QBoard_BoardPaging
+import com.tamastudy.tama.dto.*
 import com.tamastudy.tama.entity.Board
 import com.tamastudy.tama.entity.QBoard.board
 import com.tamastudy.tama.entity.QBoardCategory.boardCategory
@@ -26,7 +24,7 @@ class BoardRepositoryCustomImpl(
 
     override fun findIds(): MutableList<BoardIds> {
         return queryFactory
-                .select(QBoard_BoardIds(
+                .select(QBoardIds(
                         board.id.`as`("boardId")
                 ))
                 .from(board)
@@ -35,7 +33,7 @@ class BoardRepositoryCustomImpl(
 
     override fun searchPageSimple(condition: BoardPagingCondition, pageable: Pageable): Page<BoardPaging> {
         val result = queryFactory
-                .select(QBoard_BoardPaging(
+                .select(QBoardPaging(
                         board.id.`as`("boardId"),
                         board.title,
                         board.description,
@@ -60,7 +58,7 @@ class BoardRepositoryCustomImpl(
 
     override fun searchPageComplex(condition: BoardPagingCondition, pageable: Pageable): Page<BoardPaging> {
         val content = queryFactory
-                .select(QBoard_BoardPaging(
+                .select(QBoardPaging(
                         board.id.`as`("boardId"),
                         board.title,
                         board.description,

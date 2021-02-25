@@ -1,6 +1,9 @@
-package com.tamastudy.tama.repository
+package com.tamastudy.tama.repository.board
 
-import com.tamastudy.tama.dto.Board.*
+import com.tamastudy.tama.dto.BoardFlatDto
+import com.tamastudy.tama.dto.BoardIds
+import com.tamastudy.tama.dto.BoardPaging
+import com.tamastudy.tama.dto.BoardPagingCondition
 import com.tamastudy.tama.entity.Board
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

@@ -1,7 +1,7 @@
 package com.tamastudy.tama.entity
 
+import com.tamastudy.tama.entity.date.CommonDateEntity
 import java.io.Serializable
-import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -10,10 +10,7 @@ data class BoardCategory(
         @Column(name = "category_id")
         var id: Long? = null,
         var name: String? = null,
-        @Column(updatable = false)
-        var createdAt: LocalDateTime? = LocalDateTime.now(),
-        var updatedAt: LocalDateTime? = LocalDateTime.now(),
-): Serializable {
+): Serializable, CommonDateEntity() {
         companion object {
                 @JvmStatic
                 private val serialVersionUID: Long = 1

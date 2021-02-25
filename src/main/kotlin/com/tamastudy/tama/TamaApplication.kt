@@ -3,21 +3,21 @@ package com.tamastudy.tama
 import com.tamastudy.tama.entity.Board
 import com.tamastudy.tama.entity.BoardCategory
 import com.tamastudy.tama.entity.User
-import com.tamastudy.tama.repository.BoardCategoryRepository
-import com.tamastudy.tama.repository.BoardRepository
-import com.tamastudy.tama.repository.UserRepository
+import com.tamastudy.tama.repository.category.BoardCategoryRepository
+import com.tamastudy.tama.repository.board.BoardRepository
+import com.tamastudy.tama.repository.user.UserRepository
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.context.annotation.Bean
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.web.filter.CharacterEncodingFilter
 import javax.annotation.PostConstruct
 
 
-@SpringBootApplication
+@EnableJpaAuditing
 @EnableCaching
+@SpringBootApplication
 class TamaApplication(
         private val categoryRepository: BoardCategoryRepository,
         private val userRepository: UserRepository,

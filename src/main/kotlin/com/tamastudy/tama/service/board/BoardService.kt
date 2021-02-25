@@ -1,11 +1,6 @@
-package com.tamastudy.tama.service
+package com.tamastudy.tama.service.board
 
-import com.tamastudy.tama.dto.Board.*
-import com.tamastudy.tama.dto.BoardCategory.BoardCategoryDto
-import com.tamastudy.tama.dto.User.UserDto
-import com.tamastudy.tama.entity.Board
-import com.tamastudy.tama.entity.BoardCategory
-import com.tamastudy.tama.entity.User
+import com.tamastudy.tama.dto.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice

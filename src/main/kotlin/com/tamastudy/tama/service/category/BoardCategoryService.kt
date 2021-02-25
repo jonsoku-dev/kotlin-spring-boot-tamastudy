@@ -1,6 +1,9 @@
-package com.tamastudy.tama.service
+package com.tamastudy.tama.service.category
 
-import com.tamastudy.tama.dto.BoardCategory.*
+import com.tamastudy.tama.dto.BoardCategoryCreateRequest
+import com.tamastudy.tama.dto.BoardCategoryDto
+import com.tamastudy.tama.dto.BoardCategoryUpdateRequest
+
 
 interface BoardCategoryService {
     fun createCategory(boardCategoryCreateRequest: BoardCategoryCreateRequest): BoardCategoryDto

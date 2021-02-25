@@ -1,4 +1,4 @@
-package com.tamastudy.tama.repository
+package com.tamastudy.tama.repository.comment
 
 import com.tamastudy.tama.entity.Comment
 import org.springframework.data.jpa.repository.EntityGraph

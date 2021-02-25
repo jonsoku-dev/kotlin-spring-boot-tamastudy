@@ -1,8 +1,7 @@
 package com.tamastudy.tama.entity
 
-import com.fasterxml.jackson.annotation.JsonBackReference
+import com.tamastudy.tama.entity.date.CommonDateEntity
 import java.io.Serializable
-import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -27,11 +26,7 @@ data class Comment(
         var level: Int? = null,
 
         var isLive: Boolean? = true,
-
-        @Column(updatable = false)
-        var createdAt: LocalDateTime? = LocalDateTime.now(),
-        var updatedAt: LocalDateTime? = LocalDateTime.now(),
-) : Serializable {
+) : Serializable, CommonDateEntity() {
     companion object {
         @JvmStatic
         private val serialVersionUID: Long = 1
