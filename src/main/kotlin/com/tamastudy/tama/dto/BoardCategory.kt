@@ -9,12 +9,12 @@ import javax.validation.constraints.NotBlank
 
 data class BoardCategoryDto(
         @JsonProperty(value = "categoryId")
-        var id: Long? = null,
-        var name: String? = null,
+        var id: Long,
+        var name: String,
         @JsonIgnore
-        var createdAt: LocalDateTime? = null,
+        var createdAt: LocalDateTime,
         @JsonIgnore
-        var updatedAt: LocalDateTime? = null,
+        var updatedAt: LocalDateTime,
 ) : Serializable {
     companion object {
         @JvmStatic
@@ -25,10 +25,10 @@ data class BoardCategoryDto(
 data class BoardCategoryCreateRequest(
         @field:NotBlank
         @field:Length(max = 10)
-        var name: String? = null
+        var name: String
 )
 
 data class BoardCategoryUpdateRequest(
         @field:Length(max = 10)
-        var name: String? = null
+        var name: String
 )

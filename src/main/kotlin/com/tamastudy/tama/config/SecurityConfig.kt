@@ -24,7 +24,7 @@ import org.springframework.web.filter.CharacterEncodingFilter
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-        private val jwtTokenProvider: JwtTokenProvider,
+    private val jwtTokenProvider: JwtTokenProvider,
 ) : WebSecurityConfigurerAdapter() {
 
     @Bean
@@ -32,10 +32,6 @@ class SecurityConfig(
         return BCryptPasswordEncoder()
     }
 
-    //    override fun configure(auth: AuthenticationManagerBuilder) {
-//        auth.userDetailsService(userDetailsService)
-//    }
-//
     @Bean(name = [BeanIds.AUTHENTICATION_MANAGER])
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
@@ -43,7 +39,7 @@ class SecurityConfig(
 
     override fun configure(web: WebSecurity) {
         web.ignoring()
-                .antMatchers("/h2-console/**", "/favicon.ico", "/error")
+            .antMatchers("/h2-console/**", "/favicon.ico", "/error")
     }
 
     override fun configure(http: HttpSecurity) {
@@ -53,31 +49,35 @@ class SecurityConfig(
 
         http.addFilterBefore(filter, CsrfFilter::class.java)
         http
-                .cors()
-                .and()
-                .httpBasic().disable() // rest api 방식으로 disable
-                .csrf().disable() // token 방식으로 disable
-                .formLogin().disable() // token 방식으로 disable
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 이용하지 않음
-                .and()
-                .headers().frameOptions().sameOrigin()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/api/v1/user/login").permitAll()
-                .antMatchers("/api/v1/user/join").permitAll()
-                .antMatchers("/api/v1/user/refresh").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/v1/board").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/v1/board/ids").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/v2/board").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/v1/board/{\\d+}").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/v1/board/{\\d+}/comment").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/v1/board/{\\d+}/comment/test").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/v1/category").permitAll()
-                .anyRequest().authenticated()
-                .and().exceptionHandling().accessDeniedHandler(CustomAccessDeniedHandler())
-                .and().exceptionHandling().authenticationEntryPoint(CustomAuthenticationEntryPoint())
+            .cors()
+            .and()
+            .httpBasic().disable() // rest api 방식으로 disable
+            .csrf().disable() // token 방식으로 disable
+            .formLogin().disable() // token 방식으로 disable
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 이용하지 않음
+            .and()
+            .headers().frameOptions().sameOrigin()
+            .and()
+            .authorizeRequests()
+            .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+            .antMatchers("/api/v1/user/login").permitAll()
+            .antMatchers("/api/v1/user/join").permitAll()
+            .antMatchers("/api/v1/user/refresh").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/board").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/bo").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/board/ids").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v2/board").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/board/{^[\\d]$}").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/board/{^[\\d]$}/comment").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/category").permitAll()
+            .anyRequest().authenticated()
+            .and().exceptionHandling().accessDeniedHandler(CustomAccessDeniedHandler())
+            .and().exceptionHandling().authenticationEntryPoint(CustomAuthenticationEntryPoint())
 
-        http.addFilterBefore(JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter::class.java)
+        http.addFilterBefore(
+            JwtAuthenticationFilter(jwtTokenProvider),
+            UsernamePasswordAuthenticationFilter::class.java
+        )
     }
 }
 

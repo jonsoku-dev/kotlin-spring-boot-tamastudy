@@ -75,8 +75,8 @@ class CommentRepositoryCustomImpl(
                 .leftJoin(comment.superComment).fetchJoin()
                 .where(comment.board.id.eq(boardId), comment.level.eq(1))
                 .orderBy(
-                        comment.superComment.id.asc().nullsFirst(),
-                        comment.createdAt.asc()
+                        comment.superComment.id.desc().nullsFirst(),
+                        comment.createdAt.desc()
                 ).fetch()
         return commentMapper.toResponseDtos(entities)
     }

@@ -11,8 +11,8 @@ import javax.persistence.MappedSuperclass
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
 abstract class CommonDateEntity(
-        @CreatedDate var createdAt: LocalDateTime? = null,
-        @LastModifiedDate var updatedAt: LocalDateTime? = null
+    @CreatedDate var createdAt: LocalDateTime = LocalDateTime.now(),
+    @LastModifiedDate var updatedAt: LocalDateTime = LocalDateTime.now()
 ) {
     override fun equals(other: Any?): Boolean {
         return super.equals(other)

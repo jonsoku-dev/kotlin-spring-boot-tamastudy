@@ -13,6 +13,5 @@ class WebConfig : WebMvcConfigurer {
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowedOrigins("http://localhost:3000")
-
     }
 }

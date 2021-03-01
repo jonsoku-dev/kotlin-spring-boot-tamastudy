@@ -37,11 +37,6 @@ class BoardServiceImpl(
         return repository.searchPageDto(condition, pageable)
     }
 
-    @Cacheable(value = ["boards"], keyGenerator = "boardCacheGenerator")
-    override fun findDtosWithSlice(condition: BoardPagingCondition, pageable: Pageable): Slice<BoardFlatDto> {
-        return repository.searchSliceDto(condition, pageable)
-    }
-
     @Cacheable(value = ["board"], key = "#id")
     override fun findById(id: Long): BoardFlatDto {
         val foundBoard = repository.findById(id).let {
@@ -56,7 +51,6 @@ class BoardServiceImpl(
 
     override fun retrieveById(id: Long): BoardDto {
         val foundBoard = repository.findById(id)
-        println("foundBoard: $foundBoard")
         if (!foundBoard.isPresent) throw NotFoundException("찾을 수 없어요")
         return boardMapper.toDto(foundBoard.get())
     }

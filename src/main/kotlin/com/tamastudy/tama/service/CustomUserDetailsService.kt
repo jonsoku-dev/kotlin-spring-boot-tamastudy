@@ -18,6 +18,7 @@ class CustomUserDetailsService(
 ) : UserDetailsService {
     @Cacheable(value = ["user"], key = "#email", unless = "#result == null")
     override fun loadUserByUsername(email: String): UserDetails {
+        println("loadUserBy email: $email")
         val user = userRepository.findByEmail(email) ?: throw NotFoundException("유저를 찾을 수 없습니다.")
         return PrincipalDetails(user)
     }

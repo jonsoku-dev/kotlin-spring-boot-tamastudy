@@ -6,16 +6,16 @@ import java.time.LocalDateTime
 import javax.validation.constraints.NotBlank
 
 data class CommentDto(
-        var id: Long? = null,
-        var text: String? = null,
-        var user: UserDto? = null,
-        var board: BoardDto? = null,
-        var createdAt: LocalDateTime? = null,
-        var updatedAt: LocalDateTime? = null,
-        var superComment: CommentDto? = null,
-        var subComment: MutableList<CommentDto>? = mutableListOf<CommentDto>(),
-        var level: Int? = null,
-        var isLive: Boolean? = true,
+    var id: Long,
+    var text: String,
+    var user: UserDto? = null,
+    var board: BoardDto? = null,
+    var createdAt: LocalDateTime,
+    var updatedAt: LocalDateTime,
+    var superComment: CommentDto?,
+    var subComment: MutableList<CommentDto> = mutableListOf<CommentDto>(),
+    var level: Int? = null,
+    var isLive: Boolean? = null,
 ) : Serializable {
     companion object {
         @JvmStatic
@@ -24,16 +24,16 @@ data class CommentDto(
 }
 
 data class CommentFlatDto(
-        var commentId: Long? = null,
-        var text: String? = null,
-        var userId: Long? = null,
-        var username: String? = null,
-        var createdAt: LocalDateTime? = null,
-        var updatedAt: LocalDateTime? = null,
-        var superComment: CommentDto? = null,
-        var subComment: MutableList<CommentDto>? = mutableListOf<CommentDto>(),
-        var level: Int? = null,
-        var isLive: Boolean? = true,
+    var commentId: Long,
+    var text: String,
+    var userId: Long,
+    var username: String,
+    var createdAt: LocalDateTime,
+    var updatedAt: LocalDateTime,
+    var superComment: CommentFlatDto? = null,
+    var subComment: MutableList<CommentDto> = mutableListOf<CommentDto>(),
+    var level: Int,
+    var isLive: Boolean,
 ) : Serializable {
     companion object {
         @JvmStatic
@@ -42,15 +42,15 @@ data class CommentFlatDto(
 }
 
 data class CommentResponseDto(
-        var commentId: Long? = null,
-        var text: String? = null,
-        var userId: Long? = null,
-        var username: String? = null,
-        var createdAt: LocalDateTime? = null,
-        var updatedAt: LocalDateTime? = null,
-        var level: Int? = null,
-        var isLive: Boolean? = true,
-        var subComment: MutableList<CommentResponseDto> = mutableListOf()
+    var commentId: Long,
+    var text: String,
+    var userId: Long,
+    var username: String,
+    var createdAt: LocalDateTime,
+    var updatedAt: LocalDateTime,
+    var level: Int,
+    var isLive: Boolean? = true,
+    var subComment: MutableList<CommentResponseDto> = mutableListOf()
 ) : Serializable {
     companion object {
         @JvmStatic
@@ -59,13 +59,13 @@ data class CommentResponseDto(
 }
 
 data class CommentCreateRequest(
-        @field:NotBlank
-        @field:Length(max = 255)
-        var text: String,
-        var commentId: Long? = null,
+    @field:NotBlank
+    @field:Length(max = 255)
+    var text: String,
+    var commentId: Long? = null,
 )
 
 data class CommentUpdateRequest(
-        @field:Length(max = 255)
-        var text: String,
+    @field:Length(max = 255)
+    var text: String,
 )

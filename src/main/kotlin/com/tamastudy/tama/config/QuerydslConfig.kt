@@ -3,6 +3,7 @@ package com.tamastudy.tama.config
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 
@@ -11,9 +12,8 @@ import javax.persistence.PersistenceContext
 class QuerydslConfig {
     @PersistenceContext
     private val entityManager: EntityManager? = null
-
     @Bean
-    fun jpaQueryFactory(): JPAQueryFactory? {
+    fun jpaQueryFactory(): JPAQueryFactory {
         return JPAQueryFactory(entityManager)
     }
 }

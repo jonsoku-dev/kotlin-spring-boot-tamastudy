@@ -1,7 +1,6 @@
 package com.tamastudy.tama.advice
 
-import com.tamastudy.tama.advice.exception.NotSameRefreshTokenException
-import com.tamastudy.tama.advice.exception.ValidateRefreshTokenException
+import com.tamastudy.tama.advice.exception.UserNotFoundException
 import com.tamastudy.tama.dto.ErrorResult
 import com.tamastudy.tama.service.ResponseService
 import org.springframework.http.HttpStatus
@@ -18,29 +17,18 @@ class GlobalExceptionAdvice(
 ) {
     @ExceptionHandler(Exception::class)
     fun defaultException(request: HttpServletRequest?, e: Exception): ResponseEntity<ErrorResult> {
-        println("defaultException")
-        e.printStackTrace()
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseService.handleFailResult("서버에러입니다."))
+        println(e.localizedMessage)
+        e.stackTrace
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseService.handleFailResult("defaultException"))
     }
 
-    @ExceptionHandler(NotSameRefreshTokenException::class)
-    fun userNotFoundException(request: HttpServletRequest?, e: NotSameRefreshTokenException): ResponseEntity<ErrorResult> {
-        e.printStackTrace()
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseService.handleFailResult("유저를 찾을 수 없습니다."))
+    @ExceptionHandler(UserNotFoundException::class)
+    fun userNotFoundException(request: HttpServletRequest?, e: UserNotFoundException): ResponseEntity<ErrorResult> {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseService.handleFailResult("userNotFoundException"))
     }
 
     @ExceptionHandler(AccessDeniedException::class)
     fun accessDeniedException(request: HttpServletRequest?, e: AccessDeniedException): ResponseEntity<ErrorResult> {
-        println("accessDeniedException")
-        e.printStackTrace()
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseService.handleFailResult("Token 을 확인해주세요."))
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseService.handleFailResult("accessDeniedException"))
     }
-
-    @ExceptionHandler(ValidateRefreshTokenException::class)
-    fun validateRefreshTokenException(request: HttpServletRequest?, e: ValidateRefreshTokenException): ResponseEntity<ErrorResult> {
-        println("validateRefreshTokenException")
-        e.printStackTrace()
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseService.handleFailResult("ValidateRefreshTokenException"))
-    }
-
 }

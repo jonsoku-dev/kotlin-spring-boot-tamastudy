@@ -3,8 +3,8 @@ package com.tamastudy.tama
 import com.tamastudy.tama.entity.Board
 import com.tamastudy.tama.entity.BoardCategory
 import com.tamastudy.tama.entity.User
-import com.tamastudy.tama.repository.category.BoardCategoryRepository
 import com.tamastudy.tama.repository.board.BoardRepository
+import com.tamastudy.tama.repository.category.BoardCategoryRepository
 import com.tamastudy.tama.repository.user.UserRepository
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -19,43 +19,43 @@ import javax.annotation.PostConstruct
 @EnableCaching
 @SpringBootApplication
 class TamaApplication(
-        private val categoryRepository: BoardCategoryRepository,
-        private val userRepository: UserRepository,
-        private val boardRepository: BoardRepository,
-        private val bCryptPasswordEncoder: BCryptPasswordEncoder
+    private val categoryRepository: BoardCategoryRepository,
+    private val userRepository: UserRepository,
+    private val boardRepository: BoardRepository,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) {
     @PostConstruct
     fun initUser() {
         val categories = listOf(
-                BoardCategory().apply {
-                    this.name = "React"
-                },
-                BoardCategory().apply {
-                    this.name = "Vue"
-                },
-                BoardCategory().apply {
-                    this.name = "Angular"
-                }
+            BoardCategory().apply {
+                this.name = "React"
+            },
+            BoardCategory().apply {
+                this.name = "Vue"
+            },
+            BoardCategory().apply {
+                this.name = "Angular"
+            }
         )
         val users = listOf(
-                User().apply {
-                    this.username = "test"
-                    this.email = "test@gmail.com"
-                    this.password = bCryptPasswordEncoder.encode("1234")
-                    this.roles = "USER_ROLE"
-                },
-                User().apply {
-                    this.username = "test2"
-                    this.email = "test2@gmail.com"
-                    this.password = bCryptPasswordEncoder.encode("1234")
-                    this.roles = "USER_ROLE"
-                },
-                User().apply {
-                    this.username = "test3"
-                    this.email = "test3@gmail.com"
-                    this.password = bCryptPasswordEncoder.encode("1234")
-                    this.roles = "USER_ROLE"
-                }
+            User().apply {
+                this.username = "test"
+                this.email = "test@gmail.com"
+                this.password = bCryptPasswordEncoder.encode("1234")
+                this.roles = "USER_ROLE"
+            },
+            User().apply {
+                this.username = "test2"
+                this.email = "test2@gmail.com"
+                this.password = bCryptPasswordEncoder.encode("1234")
+                this.roles = "USER_ROLE"
+            },
+            User().apply {
+                this.username = "test3"
+                this.email = "test3@gmail.com"
+                this.password = bCryptPasswordEncoder.encode("1234")
+                this.roles = "USER_ROLE"
+            }
         )
         categoryRepository.saveAll(categories)
         userRepository.saveAll(users)

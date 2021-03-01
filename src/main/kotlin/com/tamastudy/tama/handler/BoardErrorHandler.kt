@@ -18,20 +18,20 @@ class BoardErrorHandler {
             errors.add(it.defaultMessage!!)
         }
         return ResponseEntity.badRequest().body(
-                ErrorResponse().apply {
-                    this.message = errors.joinToString()
-                    this.timestamp = LocalDateTime.now()
-                }
+                ErrorResponse(
+                    errors.joinToString(),
+                    LocalDateTime.now()
+                )
         )
     }
 
     @ExceptionHandler(Exception::class)
     fun handleException(e: Exception, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
         return ResponseEntity.badRequest().body(
-                ErrorResponse().apply {
-                    this.message = e.localizedMessage
-                    this.timestamp = LocalDateTime.now()
-                }
+                ErrorResponse(
+                    e.localizedMessage,
+                    LocalDateTime.now()
+                )
         )
     }
 }

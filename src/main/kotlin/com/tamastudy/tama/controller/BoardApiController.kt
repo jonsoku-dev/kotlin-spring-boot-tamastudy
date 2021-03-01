@@ -36,20 +36,24 @@ class BoardApiController(
                             direction = Sort.Direction.DESC
                     )
                     pageable: Pageable): Page<BoardFlatDto> {
-        println("boardPagingCondition.categoryName: ${boardPagingCondition.categoryName}")
+        println("get boards!")
         return boardService.findDtosWithPage(boardPagingCondition, pageable)
     }
 
+    @GetMapping("/v1/bo")
+    fun getBo(): ResponseEntity<Unit> {
+        return ResponseEntity.ok().body(null)
+    }
+
     @GetMapping("/v2/board")
-    fun getBoardsV2(boardPagingCondition: BoardPagingCondition,
+    fun getBoards(boardPagingCondition: BoardPagingCondition,
                     @PageableDefault(
                             size = 12,
                             sort = ["createdAt"],
                             direction = Sort.Direction.DESC
                     )
-                    pageable: Pageable): Slice<BoardFlatDto> {
-        println("boardPagingCondition.categoryName: ${boardPagingCondition.categoryName}")
-        return boardService.findDtosWithSlice(boardPagingCondition, pageable)
+                    pageable: Pageable): Page<BoardFlatDto> {
+        return boardService.findDtosWithPage(boardPagingCondition, pageable)
     }
 
     @PostMapping("/v1/board")

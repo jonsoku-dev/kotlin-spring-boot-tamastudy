@@ -1,13 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val api by configurations
+
 plugins {
-    val springBootVersion = "2.4.2"
-    val kotlinVersion = "1.4.21"
-    id("org.springframework.boot") version springBootVersion
+    val kotlinVersion = "1.4.31"
+    id("org.springframework.boot") version "2.4.3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("com.ewerk.gradle.plugins.querydsl") version "1.0.10"
     id("org.jetbrains.kotlin.plugin.allopen") version kotlinVersion
     id("org.jetbrains.kotlin.plugin.noarg") version kotlinVersion
+    id("com.github.johnrengelman.processes") version "0.5.0"
+    id("org.springdoc.openapi-gradle-plugin") version "1.3.0"
     kotlin("jvm") version kotlinVersion
     kotlin("kapt") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
@@ -55,10 +58,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-actuator")
-//    implementation("org.springframework.boot:spring-boot-hateoas")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     // Kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -66,12 +65,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     // Database
-    runtimeOnly("com.h2database:h2")
     runtimeOnly("mysql:mysql-connector-java")
 
     // Querydsl
-    compileOnly("com.querydsl:querydsl-jpa")
-    kapt("com.querydsl:querydsl-apt::jpa")
+    api("com.querydsl:querydsl-jpa")
+    kapt("com.querydsl:querydsl-apt:4.2.1:jpa")
 
     // Jwt
     implementation("com.auth0:java-jwt:3.12.0")
@@ -84,10 +82,25 @@ dependencies {
     kapt("org.mapstruct:mapstruct-processor:1.4.1.Final")
     kaptTest("org.mapstruct:mapstruct-processor:1.4.1.Final")
 
+    // OpenAPI
+    implementation("org.springdoc:springdoc-openapi-ui:1.5.4")
+    implementation("org.springdoc:springdoc-openapi-security:1.5.4")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.5.4")
+
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    annotationProcessor(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
+
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 }
+//
+//openApi {
+//    apiDocsUrl.set("http://localhost:8080/v3/api-docs.yaml")
+//    outputDir.set(file("$projectDir/dos"))
+//    outputFileName.set("openapi.yml")
+//    waitTimeInSeconds.set(30)
+//}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {

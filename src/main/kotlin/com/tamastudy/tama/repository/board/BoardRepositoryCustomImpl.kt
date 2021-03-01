@@ -12,16 +12,12 @@ import com.tamastudy.tama.mapper.BoardMapper
 import org.springframework.data.domain.*
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
-import javax.persistence.EntityManager
 
 @Repository
 class BoardRepositoryCustomImpl(
         private val boardMapper: BoardMapper,
-        private val em: EntityManager
+        private val queryFactory: JPAQueryFactory
 ) : BoardRepositoryCustom {
-
-    private val queryFactory: JPAQueryFactory = JPAQueryFactory(em)
-
     override fun findIds(): MutableList<BoardIds> {
         return queryFactory
                 .select(QBoardIds(

@@ -8,26 +8,26 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 data class BoardDto(
-        var id: Long? = null,
-        var title: String? = null,
-        var description: String? = null,
-        var user: UserDto? = null,
-        var category: BoardCategoryDto? = null,
-        var createdAt: LocalDateTime? = null,
-        var updatedAt: LocalDateTime? = null,
+    var id: Long,
+    var title: String,
+    var description: String,
+    var user: UserDto,
+    var category: BoardCategoryDto,
+    var createdAt: LocalDateTime,
+    var updatedAt: LocalDateTime,
 )
 
 data class BoardFlatDto(
-        var boardId: Long? = null,
-        var title: String? = null,
-        var description: String? = null,
-        var userId: Long? = null,
-        var username: String? = null,
-        var email: String? = null,
-        var categoryId: Long? = null,
-        var categoryName: String? = null,
-        var createdAt: LocalDateTime? = null,
-        var updatedAt: LocalDateTime? = null,
+    var boardId: Long,
+    var title: String,
+    var description: String,
+    var userId: Long,
+    var username: String,
+    var email: String,
+    var categoryId: Long,
+    var categoryName: String,
+    var createdAt: LocalDateTime,
+    var updatedAt: LocalDateTime,
 ) : Serializable {
     companion object {
         @JvmStatic
@@ -36,41 +36,41 @@ data class BoardFlatDto(
 }
 
 data class BoardCreateRequest(
-        @field:NotBlank
-        @field:Length(max = 200)
-        var title: String,
-        @field:NotBlank
-        var description: String,
-        @field:NotNull
-        var categoryId: Long
+    @field:NotBlank
+    @field:Length(max = 200)
+    var title: String,
+    @field:NotBlank
+    var description: String,
+    @field:NotNull
+    var categoryId: Long
 )
 
 data class BoardUpdateRequest(
-        @field:NotBlank
-        @field:Length(max = 200)
-        var title: String,
-        @field:NotBlank
-        var description: String,
-        @field:NotNull
-        var categoryId: Long
+    @field:NotBlank
+    @field:Length(max = 200)
+    var title: String,
+    @field:NotBlank
+    var description: String,
+    @field:NotNull
+    var categoryId: Long
 )
 
 data class BoardPagingCondition(
-        var categoryName: String? = null,
-        var keyword: String? = null
+    var categoryName: String? = null,
+    var keyword: String? = null
 )
 
 data class BoardIds @QueryProjection constructor(
-        var boardId: Long? = null
+    var boardId: Long
 )
 
 data class BoardPaging @QueryProjection constructor(
-        var boardId: Long? = null,
-        var title: String? = null,
-        var description: String? = null,
-        var userId: Long? = null,
-        var username: String? = null,
-        var email: String? = null,
-        var boardCategoryId: Long? = null,
-        var boardCategoryName: String? = null
+    var boardId: Long,
+    var title: String,
+    var description: String,
+    var userId: Long,
+    var username: String,
+    var email: String,
+    var boardCategoryId: Long,
+    var boardCategoryName: String
 )

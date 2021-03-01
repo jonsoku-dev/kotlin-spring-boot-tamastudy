@@ -1,48 +1,38 @@
 package com.tamastudy.tama.config.security
 
+import com.tamastudy.tama.config.property.JwtProperties
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
+import org.springframework.util.StringUtils
 import java.time.Duration
 import java.util.*
-import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
 
 
 @Component
 class JwtTokenProvider(
+        private val jwtProperties: JwtProperties,
         private val redisTemplate: RedisTemplate<*, *>,
         @Qualifier("customUserDetailsService") private val userDetailsService: UserDetailsService,
 ) {
-    //    @Value("spring.jwt.secret")
-    var secretKey: String = "c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK"
-
-    //        var tokenValidMillisecond = 1000L * 60 * 30 // 30분
-    var tokenValidMillisecond = 2000
-
-//    var refreshTokenValidMillisecond = 1000L * 60 * 60 * 24 * 7 // 7일
-    var refreshTokenValidMillisecond = 20000
-
-//    @PostConstruct
-//    protected fun init() {
-//        secretKey = Base64.getEncoder().encodeToString(secretKey!!.toByteArray())
-//    }
+    var tokenValidMillisecond = jwtProperties.accessMaxAge!! // 30분
+    var refreshTokenValidMillisecond = jwtProperties.refreshMaxAge!! // 7일
 
     // generate jwt token
     fun createToken(email: String): String? {
         val claims = Jwts.claims().setSubject(email)
         val now = Date()
 
-        val keyBytes = Decoders.BASE64.decode(secretKey)
+        val keyBytes = Decoders.BASE64.decode(jwtProperties.secretKey)
         val key = Keys.hmacShaKeyFor(keyBytes)
 
         return Jwts.builder()
@@ -56,7 +46,7 @@ class JwtTokenProvider(
     // generate jwt refresh token
     fun createRefreshToken(): String {
         val now = Date()
-        val keyBytes = Decoders.BASE64.decode(secretKey)
+        val keyBytes = Decoders.BASE64.decode(jwtProperties.secretKey)
         val key = Keys.hmacShaKeyFor(keyBytes)
         return Jwts.builder()
                 .setIssuedAt(now)
@@ -76,19 +66,22 @@ class JwtTokenProvider(
     fun getUserEmail(token: String?): String {
         println("getUserEmail: $token")
         return try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).body.subject
+            Jwts.parserBuilder().setSigningKey(jwtProperties.secretKey).build().parseClaimsJws(token).body.subject
         } catch (e: ExpiredJwtException) {
             e.claims.subject
         }
     }
 
     // Header 에서 토큰을 얻음
-    fun resolveToken(req: HttpServletRequest): String? {
-        return req.getHeader("Authorization")
+    fun resolveToken(request: HttpServletRequest): String? {
+        val bearerToken = request.getHeader("Authorization")
+        return if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            bearerToken.substring(7, bearerToken.length)
+        } else null
     }
 
     fun getRemainingSeconds(jwtToken: String): Duration {
-        val claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(jwtToken)
+        val claims = Jwts.parserBuilder().setSigningKey(jwtProperties.secretKey).build().parseClaimsJws(jwtToken)
         val seconds = (claims.body.expiration.time - claims.body.issuedAt.time) / 1000
         return Duration.ofSeconds(if (seconds < 0) 0 else seconds)
     }
@@ -96,13 +89,13 @@ class JwtTokenProvider(
     // jwt 토큰의 유효성 + 로그아웃 확인 + 만료일자 확인
     fun validateToken(jwtToken: String?): Boolean {
         return try {
-            if(jwtToken == null) return false
+            if (jwtToken == null) return false
             if (isLoggedOut(jwtToken)) return false
-            val claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(jwtToken)
+            val claims = Jwts.parserBuilder().setSigningKey(jwtProperties.secretKey).build().parseClaimsJws(jwtToken)
             println(claims)
             !claims.body.expiration.before(Date())
         } catch (e: Exception) {
-            false
+            return false
         }
     }
 
@@ -110,8 +103,8 @@ class JwtTokenProvider(
     fun validateTokenExceptExpiration(jwtToken: String?): Boolean {
         return try {
             if (isLoggedOut(jwtToken!!)) return false
-            val claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(jwtToken)
-            claims.body.expiration.before(Date())
+            val claims = Jwts.parserBuilder().setSigningKey(jwtProperties.secretKey).build().parseClaimsJws(jwtToken)
+            !claims.body.expiration.before(Date())
         } catch (e: ExpiredJwtException) {
             true
         } catch (e: java.lang.Exception) {

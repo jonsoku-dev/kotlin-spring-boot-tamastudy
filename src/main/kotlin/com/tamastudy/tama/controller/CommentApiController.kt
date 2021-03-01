@@ -1,6 +1,8 @@
 package com.tamastudy.tama.controller
 
 import com.tamastudy.tama.dto.*
+import com.tamastudy.tama.mapper.BoardMapper
+import com.tamastudy.tama.service.board.BoardService
 import com.tamastudy.tama.service.comment.CommentService
 import com.tamastudy.tama.util.PrincipalDetails
 import org.springframework.data.domain.Page
@@ -16,25 +18,23 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/v1/board")
 class CommentApiController(
+        private val boardService: BoardService,
         private val commentService: CommentService,
 ) {
 
     @PostMapping("/{boardId}/comment")
-    fun createComment(@PathVariable boardId: Long, @Valid @RequestBody commentCreateRequest: CommentCreateRequest): ResponseEntity<CommentDto> {
+    fun createComment(@PathVariable boardId: Long, @Valid @RequestBody commentCreateRequest: CommentCreateRequest): ResponseEntity<Unit> {
         val userDto = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
-        println(SecurityContextHolder.getContext().authentication)
-        val boardDto = BoardDto().apply {
-            this.id = boardId
-        }
-        val newComment = commentService.save(boardDto, userDto, commentCreateRequest)
-        return ResponseEntity.status(HttpStatus.CREATED).body(newComment)
+        val boardDto = boardService.retrieveById(boardId)
+        commentService.save(boardDto, userDto, commentCreateRequest)
+        return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @PatchMapping("/{boardId}/comment/{commentId}")
-    fun updateComment(@PathVariable boardId: Long, @PathVariable commentId: Long, @Valid @RequestBody commentUpdateRequest: CommentUpdateRequest): ResponseEntity<CommentFlatDto> {
+    fun updateComment(@PathVariable boardId: Long, @PathVariable commentId: Long, @Valid @RequestBody commentUpdateRequest: CommentUpdateRequest): ResponseEntity<Unit> {
         val userDto = (SecurityContextHolder.getContext().authentication.principal as PrincipalDetails).getUserDto()
-        val updatedComment = commentService.update(boardId, commentId, userDto, commentUpdateRequest)
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedComment)
+        commentService.update(boardId, commentId, userDto, commentUpdateRequest)
+        return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @DeleteMapping("/{boardId}/comment/{commentId}")
